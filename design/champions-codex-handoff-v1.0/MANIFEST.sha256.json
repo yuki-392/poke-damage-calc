@@ -1,0 +1,392 @@
+{
+  "artifact": "champions-codex-handoff-v1.0",
+  "createdAt": "2026-10-23",
+  "authoritativeDocs": "docs/00..08 + CODEX_START_PROMPT.md + contracts; reference archives are non-authoritative",
+  "files": [
+    {
+      "path": "CODEX_START_PROMPT.md",
+      "size": 3385,
+      "sha256": "2f2896b55f1453393a365ce93e48ece0716ab745d427cf0dae98c45f270dab9c"
+    },
+    {
+      "path": "START_HERE.md",
+      "size": 2573,
+      "sha256": "36cac766d51b864ba1d5a3e185db6a40e70b872933d4b2811398d1bd5b870bdf"
+    },
+    {
+      "path": "contracts/openapi-v1.2.yaml",
+      "size": 24968,
+      "sha256": "d3ae4f8de06119b5606af306c715d63d212a1556eb52f24fb5ac2969435da48b"
+    },
+    {
+      "path": "contracts/shared-contract.reference.ts",
+      "size": 4588,
+      "sha256": "5c1458c5936735fab3d386f73aff04b34ba805769d1eb3e24a2e51d3ce9ab3d4"
+    },
+    {
+      "path": "docs/00-product-requirements.md",
+      "size": 3733,
+      "sha256": "7097b1fdc31ce78570e47964d1c4760ff14efd4047d184a6d05dafb47b701bc6"
+    },
+    {
+      "path": "docs/01-ui-and-state.md",
+      "size": 3962,
+      "sha256": "6ca2ed5e22ff3e2dd4c6da50be3f26b1302fe73a3325dd914b8550b858af45d0"
+    },
+    {
+      "path": "docs/02-system-and-contracts.md",
+      "size": 4619,
+      "sha256": "49e09664193eecf71ec8eff94b683c1533e30b00b4974ab2fde1abdf7cb79275"
+    },
+    {
+      "path": "docs/03-master-ranking-database.md",
+      "size": 5880,
+      "sha256": "9c509a8dd0cc244f9ad1cdd6a2c1087aaf1b7c0f52878cff556f64d53146912a"
+    },
+    {
+      "path": "docs/04-damage-engine.md",
+      "size": 4232,
+      "sha256": "e225014e858c6729789a6b6c22e583b210933021771cfd8da27331fa01b909db"
+    },
+    {
+      "path": "docs/05-build-plan.md",
+      "size": 2917,
+      "sha256": "0e7a28b2f118552862ed7a45a6b5d36a99a369d1a674fd0f90a7ec65f2b5ed4b"
+    },
+    {
+      "path": "docs/06-acceptance-and-release.md",
+      "size": 4014,
+      "sha256": "60162f26ba4b29c70f439d0948f8d6e6447bb34a299d0a0654b345e4ffa78d17"
+    },
+    {
+      "path": "docs/07-open-risks-and-decisions.md",
+      "size": 3117,
+      "sha256": "6275578ae000cd84dd4af75cdc2b19f3de1340b1649fbbd0f4936aad7583ab9b"
+    },
+    {
+      "path": "docs/08-traceability.md",
+      "size": 1380,
+      "sha256": "8040cc0add1dae5fd63ef5d3b1d878339f097bf38f2c1e52dd8473245536a180"
+    },
+    {
+      "path": "qa/validate_handoff.py",
+      "size": 2653,
+      "sha256": "9999030544f381c026189e10f48f886cade3f0f1fb917fd71aefd43f793baaa7"
+    },
+    {
+      "path": "qa/validation-results.md",
+      "size": 832,
+      "sha256": "6ed59f306f215e1a48684cce223f8bfdb0be216cd94e0a7ac1c8795cc2735bb5"
+    },
+    {
+      "path": "reference-archives/README-DO-NOT-IMPLEMENT.md",
+      "size": 600,
+      "sha256": "da2d4f94155f48cc3c6b0fcd17e8bc831b4202c8643f15c560d005e85040906f"
+    },
+    {
+      "path": "reference-archives/architecture-design-v1.0.zip",
+      "size": 10944,
+      "sha256": "416762e2f05e5f904070ae4a74a8de978bdf4903a0b025eebbb05395e499c057"
+    },
+    {
+      "path": "reference-archives/champions-api-integration-design-v1.0.zip",
+      "size": 35944,
+      "sha256": "4b702e8ee904565964275da1f6eb3069027dc54911a2b6a023c6f4ac85a1ede4"
+    },
+    {
+      "path": "reference-archives/champions-api-validation-v1.1.zip",
+      "size": 14181,
+      "sha256": "783076930c98dfb5a7d47a5b840fb8b28ffda6d4be4b4194a6476c802062e4be"
+    },
+    {
+      "path": "reference-archives/champions-cross-review-v1.0.zip",
+      "size": 9864,
+      "sha256": "2a1441e8706e5c4da1bdf7c17d884fe52741062b01a702b2670e1e854e061c91"
+    },
+    {
+      "path": "reference-archives/champions-damage-verification-v1.0.zip",
+      "size": 19687,
+      "sha256": "513f213ad7264c6af441332daa14df10ca3e607f5b1079febfbd501acce000f5"
+    },
+    {
+      "path": "reference-archives/champions-data-design-v1.0.zip",
+      "size": 13260,
+      "sha256": "143b06280b6ff49cbbfabcadbde3196ad878b362c86cfb684939e6879def16f6"
+    },
+    {
+      "path": "reference-archives/champions-db-final-design-v1.2.zip",
+      "size": 18672,
+      "sha256": "662b51f38b033ccee23706b7f74a73e31e097eed50b3e27469c73cfbbe52ad23"
+    },
+    {
+      "path": "reference-archives/champions-design-damage-v1.2.zip",
+      "size": 22135,
+      "sha256": "975787dfe63feea08112db02674d056826dc7a66f54e1d373b43518774bf39fb"
+    },
+    {
+      "path": "reference-archives/champions-design-decisions-v1.2.zip",
+      "size": 3470,
+      "sha256": "28cac9b1b65eafca9eb616af8d8483706b87c0f78a0f9f7aef7e94253bebef68"
+    },
+    {
+      "path": "reference-archives/champions-design-decisions-v1.3.zip",
+      "size": 4950,
+      "sha256": "f4a15afd5bc7f531dbe0c0c2c75934b8aa6f1728d5b06dfce4562233329a6d20"
+    },
+    {
+      "path": "reference-archives/champions-design-decisions-v1.4.zip",
+      "size": 4723,
+      "sha256": "f097663d115d61466c3e74e64ad3f87b42702ed5161aa3259030e45fb065b161"
+    },
+    {
+      "path": "reference-archives/champions-design-decisions-v1.5.zip",
+      "size": 6899,
+      "sha256": "668a698bc2fcaf813c5fbfd884c243adcd6cd311012128df77554f0724e310c3"
+    },
+    {
+      "path": "reference-archives/champions-design-decisions-v1.6.zip",
+      "size": 15410,
+      "sha256": "4eefc33c23a4bdee60d31ddcd2bf8cb2ca2c795cd4b34256a761b5a9ad5c22bb"
+    },
+    {
+      "path": "reference-archives/champions-design-decisions-v1.7.zip",
+      "size": 8312,
+      "sha256": "60cc784cf2f6c23b6406318b425f25e65ace3a1095e82c4acb3fe5787e03d4d4"
+    },
+    {
+      "path": "reference-archives/champions-design-reconciliation-v1.1.zip",
+      "size": 22540,
+      "sha256": "5ad3b4c9d34e8a6eada50f4c865c680cc684b6d1ac369fe3472dfeecda946eb4"
+    },
+    {
+      "path": "reference-archives/champions-frontend-design-v1.0.zip",
+      "size": 26748,
+      "sha256": "5c717aa3adae74d2470768b2c1f4ec61531356074620225753920594b84d7dab"
+    },
+    {
+      "path": "reference-archives/champions-master-data-design-v1.0.zip",
+      "size": 16377,
+      "sha256": "6bd71903aa5cd19ca023941e1c15a05177eadbd54b776a23bdcd36641bce514d"
+    },
+    {
+      "path": "reference-archives/champions-top50-rank-audit-v1.0.zip",
+      "size": 13861,
+      "sha256": "9a5dba43c725972ca950dc56c7bc3fa7c62a5ae3408b75a815eace7566e49891"
+    },
+    {
+      "path": "reference-archives/tech-stack-review-v1.1.zip",
+      "size": 10957,
+      "sha256": "16626ddd1f742af22c400fa073deca9d962af7b9be584dd2ab612ac053cbdb0b"
+    },
+    {
+      "path": "reference-archives/ui-design-v0.5.zip",
+      "size": 808312,
+      "sha256": "52e3436f21dd20f280f95b4ca5d1ff3074c7fbab2c51344e94cd400e19d72254"
+    },
+    {
+      "path": "reference-ui/screen-design-v0.5.md",
+      "size": 11312,
+      "sha256": "1294777f8e6c87a7c9b784cba27d6c19ea4b943ff44641b64f797dfc57900cef"
+    },
+    {
+      "path": "reference-ui/screen-flow-v0.5.md",
+      "size": 2792,
+      "sha256": "7d4ab6c03a9c0bea28f47c1f8ae1b881cf1c44ea4a2e606c9906b397e8cdc8c8"
+    },
+    {
+      "path": "reference-ui/ui-v0.5-detail-desktop.png",
+      "size": 213868,
+      "sha256": "b4fb3f3c3b75be599f3ce275f85a6015e57cd74d6eca736cfac54528a945d7cc"
+    },
+    {
+      "path": "reference-ui/ui-v0.5-detail-mobile.png",
+      "size": 55233,
+      "sha256": "6477d1f918e4930a6beb1c2dff105238ee4fb965588d6d001447fc56ad2b67e3"
+    },
+    {
+      "path": "reference-ui/ui-v0.5-normal-desktop.png",
+      "size": 149821,
+      "sha256": "f58f6f1466962bbbdac11240a016162e0495d9ae4347c1bb4ff765a7540eec67"
+    },
+    {
+      "path": "reference-ui/ui-v0.5-top50-desktop.png",
+      "size": 188593,
+      "sha256": "bd889437f9fec454d5ebff2f859aea6e83e4770a69018df8eef3205329e6198e"
+    },
+    {
+      "path": "reference-ui/ui-v0.5-top50-mobile.png",
+      "size": 67382,
+      "sha256": "938d532e5f3e8e52d1d3248a4ada863494dfdffeb27785d398163aa9756d7312"
+    },
+    {
+      "path": "reference-ui/ui-v0.5-top50-sticky-mobile.png",
+      "size": 56520,
+      "sha256": "c734c294e2390e8f8c85139534da51562756908a439a7e9bfb97c167092464e0"
+    },
+    {
+      "path": "reference-ui/ux-design-v0.5.html",
+      "size": 87055,
+      "sha256": "bff7c0baf1f3ed86878a50bf89f7b7f34dc9658a3530e871564e09452fe0a786"
+    },
+    {
+      "path": "references/P0-04-master-data-source-decision-v1.0.md",
+      "size": 7658,
+      "sha256": "3cfc4e5cdac2e84132953d561dc7beb4249033d465b01b5ce1672efd36ceadcd"
+    },
+    {
+      "path": "references/P0-05-ranking-audit-v1.0.md",
+      "size": 6109,
+      "sha256": "a1745563aeeaa6a099d77ab3d70e62e0f67f7d93da9d93cba39dc5f79f64b4aa"
+    },
+    {
+      "path": "references/P0-06-mechanics-audit-v1.0.md",
+      "size": 10373,
+      "sha256": "f73056d0d6b20c6231a22be3fdd979b01e163b2afa42f4caec90f1123ec9e446"
+    },
+    {
+      "path": "references/READ_ME_FIRST.md",
+      "size": 1135,
+      "sha256": "e7a9db96cf1ca83f8c286ab84f220fd53d172eba2c96341c5671784654d58157"
+    },
+    {
+      "path": "references/U-01-legal-natures-v1.2.md",
+      "size": 3645,
+      "sha256": "7c69016b06f4df9917ef69b4c61fa44e9da127d9c52fe0284209816cc2eff02e"
+    },
+    {
+      "path": "references/U-02-auth-method-v1.3.md",
+      "size": 6281,
+      "sha256": "6c27b1c2e067b4db60b89cc50f3afe297e993a840f9e93f2aa52a444ac7496c6"
+    },
+    {
+      "path": "references/U-06-remove-sharing-v1.7.md",
+      "size": 8193,
+      "sha256": "e2094c09466d293bebed49cdb7729e47ac229608b2e4e8b896a5e165edc96e8d"
+    },
+    {
+      "path": "references/api-and-dataflow-design-v1.0.md",
+      "size": 17149,
+      "sha256": "e98b54fbb6d79968e727719c341057787a404488b7ab72841d126d05af8388c3"
+    },
+    {
+      "path": "references/api-selection-v1.0.md",
+      "size": 5698,
+      "sha256": "72c7a63f764794afee1a4dfd586dfe6442d7ecf7806a36468d54387f9ea3acbe"
+    },
+    {
+      "path": "references/api-validation-results-v1.1.md",
+      "size": 6131,
+      "sha256": "ac1a5a054934d5ed35df8584d7f570932deb052f688e3274c1d3bccf30c5c3d8"
+    },
+    {
+      "path": "references/architecture-decisions-v1.1.md",
+      "size": 5653,
+      "sha256": "6e559966c5bc4a0cb71949f34e7f5e4d5c7378dde928291b7c4939b368a0d9a8"
+    },
+    {
+      "path": "references/architecture-v1.0.md",
+      "size": 21372,
+      "sha256": "b4500baef312adae480b3a79f16fca0c51dd37811a97ffe7c3bb5b44b6d92bd7"
+    },
+    {
+      "path": "references/auth-save-share-design-v1.0.md",
+      "size": 11403,
+      "sha256": "5281b068585ef9d00d1210faaf90569e9af3759ba699a34ada59cf52c6aa4a0d"
+    },
+    {
+      "path": "references/canonical-contract-v1.1.md",
+      "size": 4372,
+      "sha256": "40c5961754f525f176307151c657e38a8138c174e57be3da5f54060cf626c973"
+    },
+    {
+      "path": "references/catalog-adapters-and-quality-gates-v1.0.md",
+      "size": 6670,
+      "sha256": "524e6b395b1762ced44041edfb312d4e6f215272feefec41a4575aaf14b63f85"
+    },
+    {
+      "path": "references/codex-implementation-contract-v1.2.md",
+      "size": 4541,
+      "sha256": "38d74c00ce3c242a3bb676cda7cab6a6a679567a2913b2ad64fed316ec8440e0"
+    },
+    {
+      "path": "references/codex-scope-delta-v1.7.md",
+      "size": 2815,
+      "sha256": "42926b2236bc4775738bf54623da2eb1ebd4a7a02edbd35df69f255313709fd9"
+    },
+    {
+      "path": "references/damage-engine-detailed-design-v1.2.md",
+      "size": 23324,
+      "sha256": "843e91f70138394aea811f897171c8f67ac79d773b498ff73c7778a258ed328a"
+    },
+    {
+      "path": "references/database-consolidated-v1.2.md",
+      "size": 15327,
+      "sha256": "fa79d2c2f22e8a7274dd10b7a0e3737942fccf5745a2ac3357948376a6775679"
+    },
+    {
+      "path": "references/effects-catalog-v1.2.md",
+      "size": 10972,
+      "sha256": "3b01e233d0e10024575068269d787185d76132152285658059a8669032bf5640"
+    },
+    {
+      "path": "references/engine-prototype-v1.1.zip",
+      "size": 46133,
+      "sha256": "7b06e157b25c20f27e523b32ce342af5edb3c3398687fedb6d443946472d2d89"
+    },
+    {
+      "path": "references/frontend-state-design-v1.0.md",
+      "size": 21454,
+      "sha256": "cc97249a2024f6c51ae66a6cdc4cac7adc7fac0a15bedb61b431318ea3ac4eb4"
+    },
+    {
+      "path": "references/frontend-test-plan-v1.0.md",
+      "size": 6310,
+      "sha256": "ddbb450b96fbc383ddb545dca67c1befdd30188e0e4dc73cb900a3d2a46b6b1f"
+    },
+    {
+      "path": "references/in-game-rank-audit-template.csv",
+      "size": 3437,
+      "sha256": "6ec9b1fb34226c77a908cbe406cbde6e7f3ce4dd4b8e0a91e1d0b2f85c9e2611"
+    },
+    {
+      "path": "references/migration-test-and-handoff-v1.2.md",
+      "size": 7943,
+      "sha256": "8fd81ff6f5df1ba3503993f717bcea28d32ed02c6a694ddb65f7a09e9126bbb2"
+    },
+    {
+      "path": "references/ranking-release-gates-v1.0.md",
+      "size": 5158,
+      "sha256": "f03eedbb37644d606e5e7c69993d6ac1d6e48c0550ca5337a42e05852c8ce11d"
+    },
+    {
+      "path": "references/react-component-design-v1.0.md",
+      "size": 13464,
+      "sha256": "c8cb8b3745d530d319c7e6758ae0a509ad22361f9bca4250128407d74408d770"
+    },
+    {
+      "path": "references/security-transactions-and-update-v1.2.md",
+      "size": 8634,
+      "sha256": "2f0439c511a9941be44495266a0b9534874f39e0599ef02a68489fc358df8f51"
+    },
+    {
+      "path": "references/source-rights-and-attribution-v1.0.md",
+      "size": 4269,
+      "sha256": "54c35c66e7fae4d9330d6d0ae46f09117f7645044d1c3daee8dfd986adcc23a5"
+    },
+    {
+      "path": "references/tech-stack-comparison-v1.1.md",
+      "size": 17003,
+      "sha256": "8bf171b980033dcb4f15c0ebcb6950b336ac3925eb854f2ad2b655dee851f91c"
+    },
+    {
+      "path": "references/update-schedule-v1.3.md",
+      "size": 3512,
+      "sha256": "1eaf64ee6b0e761ecab6d3a0c5d56fa3d12001f6e86ecb3373eec6a0879b6072"
+    },
+    {
+      "path": "references/verification-cases.csv",
+      "size": 5282,
+      "sha256": "2c968d3eefbcb6c4a9a63bafddfde24ec105455be5ba8dc8152ef8cb2555b588"
+    }
+  ]
+}

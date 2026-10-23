@@ -1,0 +1,278 @@
+{
+  "auditedAt": "2026-10-23T15:16:30.916Z",
+  "auditScope": "Phase 0/1 contract verification only; not ingestion, publication, mechanics or ingame ranking audit",
+  "ingameVerification": {
+    "P0_04": "unverified",
+    "P0_05": "unverified",
+    "P0_06": "unverified"
+  },
+  "productionEligible": false,
+  "attribution": [
+    {
+      "label": "Battle data provided by Pokémon Champions Battle Data",
+      "url": "https://championsbattledata.com/",
+      "terms": "https://championsbattledata.com/api-rules/",
+      "storage": "temporary cache only; no raw response committed or served"
+    },
+    {
+      "label": "Pokemon Champions Data Contributors",
+      "url": "https://github.com/otterlyclueless/pokemon-champions-data",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "changes": "field names, IDs and nature vectors projected for local validation; game verification not asserted",
+      "observedCommit": "cb874a3040174314f67642f382143cc8a401122a"
+    }
+  ],
+  "sources": [
+    {
+      "key": "api-index",
+      "url": "https://championsbattledata.com/api/index",
+      "fetchedAt": "2026-10-23T15:01:22.054286+00:00",
+      "sha256": "146965e90778f431b9c596ab737b913fe1beeb71813f74efb106f8c11b840015"
+    },
+    {
+      "key": "meta-singles",
+      "url": "https://championsbattledata.com/data/builder/meta-singles.json",
+      "fetchedAt": "2026-10-23T15:01:23.314077+00:00",
+      "sha256": "1bc239ca272a4e7fe5951c3d93b32408a0aa4c72bfaebc0ea8fe9665e93cd72d"
+    },
+    {
+      "key": "meta-doubles",
+      "url": "https://championsbattledata.com/data/builder/meta-doubles.json",
+      "fetchedAt": "2026-10-23T15:01:24.387911+00:00",
+      "sha256": "a30c21dac51d7f8c640bcf1c1d3ce6d98ae4b8fc3e23b4b5807cb8e4541039b7"
+    },
+    {
+      "key": "metadata-tauros",
+      "url": "https://championsbattledata.com/api/metadata/tauros",
+      "fetchedAt": "2026-10-23T15:01:25.360967+00:00",
+      "sha256": "c2cc6ddd0673fcab02e2f1beff231a0a25d28f75de1d748eb4f498adf2a3f657"
+    },
+    {
+      "key": "battle-singles-garchomp",
+      "url": "https://championsbattledata.com/api/battle/Singles/garchomp",
+      "fetchedAt": "2026-10-23T15:01:26.533520+00:00",
+      "sha256": "7fcb264ea2fdfc0300526c4cb5538e039e80a457e749ef99d523417238e70ca7"
+    },
+    {
+      "key": "battle-doubles-garchomp",
+      "url": "https://championsbattledata.com/api/battle/Doubles/garchomp",
+      "fetchedAt": "2026-10-23T15:01:27.417572+00:00",
+      "sha256": "53c489b8c27ea5438188733f8d56cc3ad363265794f85b04d0b88afe26c6cc68"
+    },
+    {
+      "key": "master-roster",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/pokemon/roster.json",
+      "fetchedAt": "2026-10-23T15:01:28.330384+00:00",
+      "sha256": "64829ba2e67bef366e1c5e2e31fab0aa1accb7ffd7472be47fde18fc1158f346"
+    },
+    {
+      "key": "master-natures",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/natures/natures.json",
+      "fetchedAt": "2026-10-23T15:01:29.188534+00:00",
+      "sha256": "55de014cc5739e134bb12a63c8ef39779d5665e1a39cd7b1d7ffe29101da21b3"
+    },
+    {
+      "key": "master-stats",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/pokemon/base-stats.json",
+      "fetchedAt": "2026-10-23T15:02:27.086071+00:00",
+      "sha256": "250497d41dbee57480d4d17b15c638d49d5b291002572c57e10f25e403ae23a0"
+    },
+    {
+      "key": "master-moves",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/moves/moves.json",
+      "fetchedAt": "2026-10-23T15:02:33.391793+00:00",
+      "sha256": "bd1cf9462aca5cd2ac1705c5ce210bb3aec2135d6d7148681f28bd2838a80f9b"
+    },
+    {
+      "key": "master-abilities",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/abilities/abilities.json",
+      "fetchedAt": "2026-10-23T15:02:35.580878+00:00",
+      "sha256": "9636176df42763714ef316268616d639ec231bf9331004569b51e024aaf71b1c"
+    },
+    {
+      "key": "master-items",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/items/items.json",
+      "fetchedAt": "2026-10-23T15:02:36.501655+00:00",
+      "sha256": "3b78d284a7b116a8d306b8a07df63659e220e297a3eb2bbb303bfee34a506149"
+    },
+    {
+      "key": "master-learnsets",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/main/learnsets/learnsets.json",
+      "fetchedAt": "2026-10-23T15:02:50.725000+00:00",
+      "sha256": "3bd88214f1a942d18572845a948a840af383f1559562ada96c85ea74be6abcc4"
+    },
+    {
+      "key": "master-commit",
+      "url": "https://api.github.com/repos/otterlyclueless/pokemon-champions-data/commits/main",
+      "fetchedAt": "2026-10-23T15:02:53.245829+00:00",
+      "sha256": "142bd5659d17591800501ec0f28b0bc80e93ca3d564fd4e3aafc89d9cd9f1700"
+    }
+  ],
+  "catalog": {
+    "structuralValidation": "pass",
+    "forms": 258,
+    "natures": 25,
+    "moves": 900,
+    "abilities": 191,
+    "items": 583,
+    "learnsets": 258,
+    "unresolvedFormAliases": [
+      "Paldean Tauros",
+      "Vivillon"
+    ],
+    "allProvenance": "provisional",
+    "allEffects": "unsupported",
+    "gameInclusion": "unconfirmed or explicitly excluded",
+    "apiIndexRowCount": 263
+  },
+  "rankings": [
+    {
+      "format": "singles",
+      "upstreamRowCount": 262,
+      "projectedRowCount": 50,
+      "structuralBuilds": 50,
+      "structuralRanking": "pass",
+      "masterAwareRanking": "rejected",
+      "rejectionCodes": [
+        "UNKNOWN_OR_UNCONFIRMED_FORM"
+      ],
+      "issues": {
+        "missingForms": [
+          "Baxcalibur",
+          "Blaziken",
+          "Cinderace",
+          "Gholdengo",
+          "Golisopod",
+          "Indeedee",
+          "Metagross",
+          "Pawmot",
+          "Rillaboom",
+          "Rotom-Heat",
+          "Rotom-Wash",
+          "Salamence",
+          "Staraptor",
+          "Swampert"
+        ],
+        "missingMoves": [],
+        "excludedMoves": [
+          "Double Shock",
+          "Drum Beating",
+          "Glaive Rush",
+          "Make It Rain",
+          "Pyro Ball",
+          "Revival Blessing"
+        ],
+        "missingAbilities": [
+          "Emergency Exit",
+          "Good as Gold",
+          "Grassy Surge",
+          "Libero",
+          "Psychic Surge",
+          "Thermal Exchange"
+        ],
+        "missingItems": [],
+        "missingNatures": [],
+        "illegalAbilities": [],
+        "invalidPoints": [],
+        "incompleteSets": []
+      },
+      "generatedAt": "2026-10-22T08:44:17.447Z",
+      "upstreamPublishedAt": null,
+      "usageRate": "not provided; null retained",
+      "representativeBuild": "null until complete approved catalog exists"
+    },
+    {
+      "format": "doubles",
+      "upstreamRowCount": 262,
+      "projectedRowCount": 50,
+      "structuralBuilds": 50,
+      "structuralRanking": "pass",
+      "masterAwareRanking": "rejected",
+      "rejectionCodes": [
+        "UNKNOWN_OR_UNCONFIRMED_FORM"
+      ],
+      "issues": {
+        "missingForms": [
+          "Annihilape",
+          "Basculegion-F",
+          "Gholdengo",
+          "Golisopod",
+          "Grimmsnarl",
+          "Indeedee",
+          "Indeedee-F",
+          "Metagross",
+          "Rillaboom",
+          "Salamence",
+          "Staraptor",
+          "Swampert"
+        ],
+        "missingMoves": [],
+        "excludedMoves": [
+          "Make It Rain",
+          "Rage Fist",
+          "Spirit Break"
+        ],
+        "missingAbilities": [
+          "Emergency Exit",
+          "Good as Gold",
+          "Grassy Surge",
+          "Psychic Surge"
+        ],
+        "missingItems": [],
+        "missingNatures": [],
+        "illegalAbilities": [],
+        "invalidPoints": [],
+        "incompleteSets": []
+      },
+      "generatedAt": "2026-10-22T08:44:17.447Z",
+      "upstreamPublishedAt": null,
+      "usageRate": "not provided; null retained",
+      "representativeBuild": "null until complete approved catalog exists"
+    }
+  ],
+  "battleChecks": [
+    {
+      "format": "singles",
+      "season": "Current",
+      "date": null,
+      "categories": [
+        "move",
+        "held_item",
+        "teammate",
+        "stat_alignment",
+        "stat_points",
+        "ability"
+      ],
+      "statPointRows": 10,
+      "validStatPointRows": 10
+    },
+    {
+      "format": "doubles",
+      "season": "Current",
+      "date": null,
+      "categories": [
+        "move",
+        "held_item",
+        "teammate",
+        "stat_alignment",
+        "stat_points",
+        "ability"
+      ],
+      "statPointRows": 10,
+      "validStatPointRows": 10
+    }
+  ],
+  "upstreamSetCaveat": "The upstream generator clamps/defaults stat points and defaults missing nature to Serious. Valid meta sets do not prove raw source completeness; raw point rows were sampled for Garchomp in both formats only.",
+  "baseStatHazard": {
+    "form": "Garchomp",
+    "apiMetadataHp": 183,
+    "masterBaseHp": 108,
+    "resolution": "Different semantic fields; API metadata stats are NOT copied to catalog.baseStats. No reverse stat formula inferred."
+  },
+  "blockers": [
+    "API does not specify an approved regulation ID",
+    "Master roster and ability catalog do not cover every current TOP50 entry",
+    "Stat Alignment correspondence remains unverified in game",
+    "P0-05/P0-06 evidence is not part of this audit"
+  ]
+}

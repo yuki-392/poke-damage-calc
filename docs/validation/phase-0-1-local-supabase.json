@@ -1,0 +1,45 @@
+{
+  "auditedAt": "2026-10-23T15:16:30.993Z",
+  "localOnly": true,
+  "apiUrl": "http://127.0.0.1:55321",
+  "dockerVersion": "29.5.2",
+  "cliVersion": "2.122.0",
+  "database": {
+    "version": "17.11",
+    "authUsers": 0,
+    "publicTables": [],
+    "publicPolicies": 0,
+    "authMigrationHistory": "auth.schema_migrations",
+    "storageMigrationHistory": "storage.migrations",
+    "applicationMigrationHistory": null
+  },
+  "databaseProbe": "pass: temporary CHECK, PK, FK, RLS owner/anon/WITH CHECK; all probe SQL rolled back",
+  "authentication": {
+    "noSessionRejected": "pass",
+    "localMagicLinkGeneration": "pass",
+    "issuedLinkType": "signup",
+    "magicLinkVerification": "pass",
+    "verifiedUserIdentity": "pass",
+    "magicLinkReuseRejected": "pass",
+    "signOut": "pass",
+    "revokedRefreshRejected": "pass",
+    "existingUserMagicLink": "pass",
+    "syntheticUserCleanup": "pass"
+  },
+  "preservation": {
+    "authUserCountUnchanged": true,
+    "publicTablesUnchanged": true,
+    "probeTablesRemaining": 0
+  },
+  "notImplemented": [
+    "application baseline migration",
+    "application tables/constraints/RLS",
+    "Next.js authentication callback",
+    "saved calculations API"
+  ],
+  "notTested": [
+    "Google OAuth (external provider not connected)",
+    "email delivery and browser callback (admin-generated local Magic Link only)",
+    "production Supabase/Vercel"
+  ]
+}

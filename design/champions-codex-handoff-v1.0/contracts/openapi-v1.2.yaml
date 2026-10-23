@@ -1,0 +1,1047 @@
+openapi: 3.1.0
+info:
+  title: Pokémon Champions Calculator - Same-Origin BFF
+  version: 1.2.0-handoff-design
+  description: Design-only initial release contract. No sharing feature. Saved build natureId is required,
+    and formId is authoritative for mega/form. Runtime semantic validation and release gates still required.
+servers:
+- url: /
+security: []
+tags:
+- name: Public
+- name: Calculations
+- name: Shares
+paths:
+  /api/v1/bootstrap:
+    get:
+      tags:
+      - Public
+      summary: Get application data versions and available rankings
+      responses:
+        '200':
+          description: Bootstrap metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BootstrapResponse'
+  /api/v1/rankings/active:
+    get:
+      tags:
+      - Public
+      summary: Get both singles and doubles as one active publication
+      responses:
+        '200':
+          description: Exactly 50 entries per format in production
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveRankingsResponse'
+        '304':
+          description: Not modified
+        '503':
+          $ref: '#/components/responses/Error'
+  /api/v1/rankings/snapshots/{snapshotId}:
+    get:
+      tags:
+      - Rankings
+      summary: Read active or owner-authorized retained snapshot only (no public archive)
+      parameters:
+      - $ref: '#/components/parameters/SnapshotId'
+      responses:
+        '200':
+          description: Active or authorized retained snapshot
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - meta
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Ranking'
+                  meta:
+                    $ref: '#/components/schemas/ApiMeta'
+        '404':
+          $ref: '#/components/responses/Error'
+        '410':
+          $ref: '#/components/responses/Error'
+        '401':
+          $ref: '#/components/responses/Error'
+        '403':
+          $ref: '#/components/responses/Error'
+      description: Allow the active snapshot; for inactive snapshots require authenticated owner with an existing
+        saved calculation referencing it. Never expose arbitrary historical dumps; 404/410 if removed.
+  /api/v1/calculations:
+    get:
+      tags:
+      - Calculations
+      summary: List authenticated owner's saved calculation metadata
+      security:
+      - cookieAuth: []
+      parameters:
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 20
+      - name: cursor
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Paginated list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationPageResponse'
+        '401':
+          $ref: '#/components/responses/Error'
+    post:
+      tags:
+      - Calculations
+      summary: Create a saved calculation
+      security:
+      - cookieAuth: []
+      parameters:
+      - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationWriteRequest'
+      responses:
+        '201':
+          description: Created saved calculation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedCalculationResponse'
+        '401':
+          $ref: '#/components/responses/Error'
+        '409':
+          $ref: '#/components/responses/Error'
+        '422':
+          $ref: '#/components/responses/Error'
+  /api/v1/calculations/{id}:
+    parameters:
+    - $ref: '#/components/parameters/CalculationId'
+    get:
+      tags:
+      - Calculations
+      summary: Read owned calculation
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          description: Calculation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedCalculationResponse'
+        '404':
+          $ref: '#/components/responses/Error'
+    put:
+      tags:
+      - Calculations
+      summary: Replace calculation with optimistic concurrency
+      security:
+      - cookieAuth: []
+      parameters:
+      - $ref: '#/components/parameters/IfMatch'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculationWriteRequest'
+      responses:
+        '200':
+          description: Updated and revision incremented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SavedCalculationResponse'
+        '409':
+          $ref: '#/components/responses/Error'
+        '428':
+          $ref: '#/components/responses/Error'
+    delete:
+      tags:
+      - Calculations
+      summary: Delete owned calculation; does not automatically revoke shared snapshots
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          $ref: '#/components/responses/Error'
+  /api/v1/catalog/{kind}:
+    get:
+      tags:
+      - Public
+      summary: Read an approved, versioned catalog slice for UI choices
+      parameters:
+      - name: kind
+        in: path
+        required: true
+        schema:
+          type: string
+          enum:
+          - forms
+          - moves
+          - abilities
+          - items
+          - learnsets
+          - natures
+      - name: version
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+      - name: formId
+        in: query
+        schema:
+          type: string
+        description: Required when kind=learnsets.
+      responses:
+        '200':
+          description: Approved catalog slice; response constrained to curated fields, not raw upstream dumps.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogResponse'
+        '400':
+          $ref: '#/components/responses/Error'
+        '404':
+          $ref: '#/components/responses/Error'
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: header
+      name: Cookie
+      description: Full Cookie request header containing SDK-managed @supabase/ssr session cookies. Cookie
+        NAMES are not fixed by this OpenAPI contract. Server MUST verify identity via Supabase Auth and ownership/RLS.
+  parameters:
+    SnapshotId:
+      name: snapshotId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CalculationId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+    IfMatch:
+      name: If-Match
+      in: header
+      required: true
+      schema:
+        type: string
+        pattern: ^"rev:[0-9]+"$
+  schemas:
+    ApiMeta:
+      type: object
+      required:
+      - requestId
+      properties:
+        requestId:
+          type: string
+      additionalProperties: false
+    ApiError:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          required:
+          - code
+          - message
+          - requestId
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            requestId:
+              type: string
+            details:
+              type: object
+              additionalProperties: true
+          additionalProperties: false
+    SourceVersions:
+      type: object
+      properties:
+        ruleVersion:
+          type: string
+          minLength: 1
+        masterDataVersion:
+          type: string
+          minLength: 1
+        effectCatalogVersion:
+          type: string
+          minLength: 1
+        regulationId:
+          type: string
+          minLength: 1
+      additionalProperties: false
+      required:
+      - ruleVersion
+      - masterDataVersion
+      - effectCatalogVersion
+      - regulationId
+    Bootstrap:
+      type: object
+      required:
+      - apiVersion
+      - payloadSchemaVersion
+      - sourceVersions
+      - masterManifestUrl
+      - rankingAvailability
+      properties:
+        apiVersion:
+          const: v1
+        payloadSchemaVersion:
+          const: 1
+        sourceVersions:
+          $ref: '#/components/schemas/SourceVersions'
+        masterManifestUrl:
+          type: string
+        activePublicationId:
+          type:
+          - string
+          - 'null'
+        rankingAvailability:
+          enum:
+          - available
+          - unverified
+          - unavailable
+      additionalProperties: false
+    BootstrapResponse:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/Bootstrap'
+        meta:
+          $ref: '#/components/schemas/ApiMeta'
+    Build:
+      type: object
+      properties:
+        pokemonFormId:
+          type: string
+          minLength: 1
+        statPoints:
+          $ref: '#/components/schemas/StatPoints'
+        natureId:
+          type: string
+          minLength: 1
+          description: Must match a legal five-stat nature vector for the selected Champions ruleset.
+        natureFactors:
+          $ref: '#/components/schemas/NatureFactors'
+        abilityId:
+          type:
+          - string
+          - 'null'
+        item:
+          $ref: '#/components/schemas/ItemEntry'
+        currentHp:
+          type:
+          - integer
+          - 'null'
+          minimum: 1
+        stages:
+          $ref: '#/components/schemas/Stages'
+        status:
+          type: string
+          enum:
+          - none
+          - burn
+          - poison
+          - badPoison
+          - paralysis
+          - sleep
+          - freeze
+        origin:
+          type: string
+          enum:
+          - measured
+          - estimated
+          - custom
+          - manual
+          - incomplete
+      additionalProperties: false
+      required:
+      - pokemonFormId
+      - statPoints
+      - natureId
+      - natureFactors
+      - abilityId
+      - item
+      - currentHp
+      - stages
+      - status
+      - origin
+      description: 'Saved valid build: runtime-validate ability/forme/item constraints, 0..32 six stat points
+        sum <=66, legal nature ID and factors. pokemonFormId is the actual battle form and sole mega/form source
+        of truth.'
+    RankingEntry:
+      type: object
+      required:
+      - rankingEntryId
+      - rank
+      - pokemonFormId
+      - usageRate
+      - buildOrigin
+      - representativeBuild
+      - warnings
+      properties:
+        rankingEntryId:
+          type: string
+        rank:
+          type: integer
+          minimum: 1
+          maximum: 50
+        pokemonFormId:
+          type: string
+        usageRate:
+          type:
+          - number
+          - 'null'
+          minimum: 0
+          maximum: 1
+        buildOrigin:
+          enum:
+          - measured
+          - estimated
+          - incomplete
+        representativeBuild:
+          oneOf:
+          - $ref: '#/components/schemas/Build'
+          - type: 'null'
+        warnings:
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+    Ranking:
+      type: object
+      required:
+      - snapshotId
+      - format
+      - regulationId
+      - sourceId
+      - sourceGeneratedAt
+      - fetchedAt
+      - verificationStatus
+      - rankingProvenance
+      - attribution
+      - entries
+      - upstreamPublishedAt
+      properties:
+        snapshotId:
+          type: string
+          minLength: 1
+        format:
+          enum:
+          - singles
+          - doubles
+        regulationId:
+          type: string
+        sourceId:
+          type: string
+        sourceGeneratedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+        fetchedAt:
+          type: string
+          format: date-time
+        verificationStatus:
+          enum:
+          - verified_ingame
+          - unverified
+          - external_ladder
+        rankingProvenance:
+          enum:
+          - ingame_rank
+          - external_ladder_rank
+          - unverified_rank
+        attribution:
+          type: object
+          required:
+          - label
+          - url
+          properties:
+            label:
+              type: string
+            url:
+              type: string
+              format: uri
+        entries:
+          type: array
+          minItems: 50
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/RankingEntry'
+        upstreamPublishedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+      additionalProperties: false
+    ActiveRankings:
+      type: object
+      required:
+      - publicationId
+      - publishedAt
+      - rankings
+      properties:
+        publicationId:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+        rankings:
+          type: object
+          required:
+          - singles
+          - doubles
+          properties:
+            singles:
+              $ref: '#/components/schemas/Ranking'
+            doubles:
+              $ref: '#/components/schemas/Ranking'
+          additionalProperties: false
+      additionalProperties: false
+    ActiveRankingsResponse:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/ActiveRankings'
+        meta:
+          $ref: '#/components/schemas/ApiMeta'
+    SavedInputSnapshot:
+      oneOf:
+      - type: object
+        properties:
+          payloadSchemaVersion:
+            const: 1
+          mode:
+            const: normal
+          input:
+            $ref: '#/components/schemas/NormalSavedInput'
+        additionalProperties: false
+        required:
+        - payloadSchemaVersion
+        - mode
+        - input
+      - type: object
+        properties:
+          payloadSchemaVersion:
+            const: 1
+          mode:
+            const: top50
+          input:
+            $ref: '#/components/schemas/Top50SavedInput'
+        additionalProperties: false
+        required:
+        - payloadSchemaVersion
+        - mode
+        - input
+      description: Wire contract. Must also pass runtime stat-point sum, legal nature, master IDs, version,
+        max UTF-8 bytes, snapshot/format checks.
+    SavedCalculation:
+      type: object
+      required:
+      - id
+      - title
+      - mode
+      - format
+      - revision
+      - updatedAt
+      - createdAt
+      - snapshot
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+        mode:
+          enum:
+          - normal
+          - top50
+        format:
+          enum:
+          - singles
+          - doubles
+        revision:
+          type: integer
+          minimum: 1
+        updatedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        snapshot:
+          $ref: '#/components/schemas/SavedInputSnapshot'
+      additionalProperties: false
+    SavedCalculationResponse:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          $ref: '#/components/schemas/SavedCalculation'
+        meta:
+          $ref: '#/components/schemas/ApiMeta'
+    CalculationPageResponse:
+      type: object
+      required:
+      - data
+      - meta
+      properties:
+        data:
+          type: object
+          required:
+          - items
+          - nextCursor
+          properties:
+            items:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
+            nextCursor:
+              type:
+              - string
+              - 'null'
+        meta:
+          $ref: '#/components/schemas/ApiMeta'
+    CalculationWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+        snapshot:
+          $ref: '#/components/schemas/SavedInputSnapshot'
+      additionalProperties: false
+      required:
+      - title
+      - snapshot
+    StatPoints:
+      type: object
+      properties:
+        hp:
+          type: integer
+          minimum: 0
+          maximum: 32
+        attack:
+          type: integer
+          minimum: 0
+          maximum: 32
+        defense:
+          type: integer
+          minimum: 0
+          maximum: 32
+        spAttack:
+          type: integer
+          minimum: 0
+          maximum: 32
+        spDefense:
+          type: integer
+          minimum: 0
+          maximum: 32
+        speed:
+          type: integer
+          minimum: 0
+          maximum: 32
+      additionalProperties: false
+      required:
+      - hp
+      - attack
+      - defense
+      - spAttack
+      - spDefense
+      - speed
+    NatureFactors:
+      type: object
+      properties:
+        attack:
+          type: number
+          enum:
+          - 0.9
+          - 1
+          - 1.1
+        defense:
+          type: number
+          enum:
+          - 0.9
+          - 1
+          - 1.1
+        spAttack:
+          type: number
+          enum:
+          - 0.9
+          - 1
+          - 1.1
+        spDefense:
+          type: number
+          enum:
+          - 0.9
+          - 1
+          - 1.1
+        speed:
+          type: number
+          enum:
+          - 0.9
+          - 1
+          - 1.1
+      additionalProperties: false
+      required:
+      - attack
+      - defense
+      - spAttack
+      - spDefense
+      - speed
+    Stages:
+      type: object
+      properties:
+        attack:
+          type: integer
+          minimum: -6
+          maximum: 6
+        defense:
+          type: integer
+          minimum: -6
+          maximum: 6
+        spAttack:
+          type: integer
+          minimum: -6
+          maximum: 6
+        spDefense:
+          type: integer
+          minimum: -6
+          maximum: 6
+        speed:
+          type: integer
+          minimum: -6
+          maximum: 6
+      additionalProperties: false
+      required:
+      - attack
+      - defense
+      - spAttack
+      - spDefense
+      - speed
+    ItemEntry:
+      oneOf:
+      - type: object
+        properties:
+          kind:
+            const: none
+        additionalProperties: false
+        required:
+        - kind
+      - type: object
+        properties:
+          kind:
+            const: known
+          itemId:
+            type: string
+            minLength: 1
+        additionalProperties: false
+        required:
+        - kind
+        - itemId
+      - type: object
+        properties:
+          kind:
+            const: customText
+          text:
+            type: string
+            minLength: 1
+            maxLength: 100
+        additionalProperties: false
+        required:
+        - kind
+        - text
+    SupplementaryCondition:
+      oneOf:
+      - type: object
+        properties:
+          kind:
+            const: allyAbility
+          abilityId:
+            type: string
+            minLength: 1
+          isActive:
+            type: boolean
+        additionalProperties: false
+        required:
+        - kind
+        - abilityId
+        - isActive
+      - type: object
+        properties:
+          kind:
+            const: moveEffect
+          effectId:
+            type: string
+            minLength: 1
+          optionId:
+            type: string
+            minLength: 1
+        additionalProperties: false
+        required:
+        - kind
+        - effectId
+        - optionId
+      - type: object
+        properties:
+          kind:
+            const: attackerWeightKg
+          kilograms:
+            type: number
+            exclusiveMinimum: 0
+        additionalProperties: false
+        required:
+        - kind
+        - kilograms
+      - type: object
+        properties:
+          kind:
+            const: defenderWeightKg
+          kilograms:
+            type: number
+            exclusiveMinimum: 0
+        additionalProperties: false
+        required:
+        - kind
+        - kilograms
+    BattleContext:
+      type: object
+      properties:
+        weather:
+          type: string
+          enum:
+          - none
+          - sun
+          - rain
+          - sand
+          - snow
+        terrain:
+          type: string
+          enum:
+          - none
+          - electric
+          - grassy
+          - misty
+          - psychic
+        targetsActuallyHit:
+          type: integer
+          enum:
+          - 1
+          - 2
+          - 3
+        critical:
+          type: boolean
+        helpingHand:
+          type: boolean
+        reflectOnDefenderSide:
+          type: boolean
+        lightScreenOnDefenderSide:
+          type: boolean
+        auroraVeilOnDefenderSide:
+          type: boolean
+        attackerGrounded:
+          type:
+          - boolean
+          - 'null'
+        defenderGrounded:
+          type:
+          - boolean
+          - 'null'
+        supplementary:
+          type: array
+          items:
+            $ref: '#/components/schemas/SupplementaryCondition'
+          maxItems: 32
+      additionalProperties: false
+      required:
+      - weather
+      - terrain
+      - targetsActuallyHit
+      - critical
+      - helpingHand
+      - reflectOnDefenderSide
+      - lightScreenOnDefenderSide
+      - auroraVeilOnDefenderSide
+      - attackerGrounded
+      - defenderGrounded
+      - supplementary
+    NormalSavedInput:
+      type: object
+      properties:
+        format:
+          type: string
+          enum:
+          - singles
+          - doubles
+        attacker:
+          $ref: '#/components/schemas/Build'
+        defender:
+          $ref: '#/components/schemas/Build'
+        moves:
+          type: array
+          minItems: 1
+          maxItems: 4
+          items:
+            type: string
+            minLength: 1
+        conditions:
+          $ref: '#/components/schemas/BattleContext'
+        sourceVersions:
+          $ref: '#/components/schemas/SourceVersions'
+      additionalProperties: false
+      required:
+      - format
+      - attacker
+      - defender
+      - moves
+      - conditions
+      - sourceVersions
+    Top50SavedInput:
+      type: object
+      properties:
+        format:
+          type: string
+          enum:
+          - singles
+          - doubles
+        rankingSnapshotId:
+          type: string
+          minLength: 1
+        attacker:
+          $ref: '#/components/schemas/Build'
+        moves:
+          type: array
+          minItems: 1
+          maxItems: 4
+          items:
+            type: string
+            minLength: 1
+        conditions:
+          $ref: '#/components/schemas/BattleContext'
+        defenderOverrides:
+          type: object
+          propertyNames:
+            minLength: 1
+          additionalProperties:
+            $ref: '#/components/schemas/Build'
+          maxProperties: 50
+        sourceVersions:
+          $ref: '#/components/schemas/SourceVersions'
+      additionalProperties: false
+      required:
+      - format
+      - rankingSnapshotId
+      - attacker
+      - moves
+      - conditions
+      - defenderOverrides
+      - sourceVersions
+    CatalogResponse:
+      type: object
+      additionalProperties: false
+      required:
+      - version
+      - kind
+      - entries
+      properties:
+        version:
+          type: string
+        kind:
+          type: string
+        entries:
+          type: array
+          maxItems: 2000
+          items:
+            $ref: '#/components/schemas/CatalogEntry'
+    CatalogEntry:
+      type: object
+      additionalProperties: false
+      required:
+      - id
+      - displayName
+      - verificationStatus
+      properties:
+        id:
+          type: string
+        displayName:
+          type: string
+        verificationStatus:
+          type: string
+          enum:
+          - verified
+          - provisional
+          - conflicting
+        type:
+          type:
+          - string
+          - 'null'
+        description:
+          type:
+          - string
+          - 'null'
+        attributes:
+          type: object
+          additionalProperties: true
+        attribution:
+          type:
+          - string
+          - 'null'
+  responses:
+    Error:
+      description: Error envelope. Code depends on endpoint.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ApiError'
