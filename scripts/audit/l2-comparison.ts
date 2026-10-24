@@ -17,6 +17,13 @@ const effectNames = { technician: "Technician", hugePower: "Huge Power", lifeOrb
 function effectiveReferenceEffect(catalog: EngineCatalog, request: DamageRequest, owner: "attacker" | "defender", effectIds: string[]) {
   for (const id of effectIds) {
     const def = catalog.effects[id];
+    if (def?.kind === "championsDefense") {
+      const state = request.conditions.supplementary.find(s => s.kind === "moveEffect" && s.effectId === id);
+      if (state?.kind === "moveEffect" && state.optionId !== "active-single-hit-clear-field") throw new Error("No equal-condition defense reference mapping");
+      // Keep the actual named effect even when its trigger is false. Never substitute
+      // No Ability/empty item to manufacture a suppression comparison.
+      return { levitate: "Levitate", airBalloon: "Air Balloon", multiscale: "Multiscale" }[def.name];
+    }
     if (def?.kind !== "champions") continue;
     // Suppression itself is not simulated: compare explicitly resolved effective states.
     const state = request.conditions.supplementary.find(s => s.kind === "moveEffect" && s.effectId === id);
@@ -88,7 +95,7 @@ const cases: Case[] = [
   { id: "helping-hand", edit: ({ request: r }) => { r.conditions.helpingHand = true; } },
   { id: "combined-rounding", edit: ({ catalog: c, request: r }) => { c.master.forms[0]!.types = ["fire"]; c.master.forms[1]!.types = ["water"]; r.format = "doubles"; r.moveId = "test-unlearned"; r.conditions.targetsActuallyHit = 2; r.conditions.weather = "sun"; r.conditions.reflectOnDefenderSide = true; r.attacker.status = "burn"; r.conditions.helpingHand = true; } },
 ];
-function compareL2Setup(id: string, setup: Setup, referenceName?: string) {
+export function compareL2Setup(id: string, setup: Setup, referenceName?: string) {
     const { catalog, request: r } = setup;
     const model = catalog.moves[r.moveId]!;
     if (model.model !== "standard" && !(referenceName && ["hpScaled", "nonDamaging"].includes(model.model))) throw new Error("Unmapped comparison model");
@@ -182,7 +189,7 @@ export function runPhase2BL2Comparison() {
   return { reference: { package: "@smogon/calc", version: "0.12.0", generation: gen.num, gitHead: "d7a69cf40616057ef40faf7623df7a628e58b535" }, gameVerified: false, types, effects };
 }
 export function runPhase2B2L2Comparison() {
-  const models = (Object.keys(championsMoveDefinitions) as NamedMove[]).map(id => {
+  const models = (["earthquake", "rockSlide", "flamethrower", "waterSpout", "protect"] as NamedMove[]).map(id => {
     const declared = championsMoveDefinitions[id]; const move = new Move(gen, declared.referenceName);
     const reference = { power: move.bp, type: move.type, category: move.category, target: move.target, priority: move.priority };
     return { id, listed: !!gen.moves.get(toID(declared.referenceName)), local: declared.reference, reference, classification: JSON.stringify(declared.reference) === JSON.stringify(reference) ? "一致" : "不一致" };

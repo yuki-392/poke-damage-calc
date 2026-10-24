@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { championsMoveDefinitions } from "./champions-moves";
+import { defenseContextOptions } from "./champions-defense";
 import { normalSavedInputSchema, rankingSchema, top50SavedInputSchema } from "../contracts/schemas";
 import { createContractValidator } from "../contracts/validation";
 import { damageRequestSchema, engineCatalogSchema, type DamageResult, type EffectDefinition, type Failure, type FailureStatus, type TraceEntry } from "./contracts";
@@ -77,6 +78,11 @@ export function createDamageEngine(catalogInput: unknown) {
             if (Object.entries(expected).some(([key, value]) => (move as Record<string, unknown>)[key] !== value)) stop("unsupported", "MOVE_MODEL_MISMATCH", ["moveId"]);
             if (selected.some(e => e.definition.kind === "championsMove")) stop("unsupported", "DUPLICATE_MOVE_MODEL", ["moveId"]);
           }
+          if (definition.kind === "championsDefense") {
+            if (entity !== (definition.name === "airBalloon" ? "item" : "ability")) stop("unsupported", "EFFECT_ENTITY_MISMATCH", [owner]);
+            if (definition.evidence.availability !== "reference_listed") stop("unsupported", "NAMED_EFFECT_AVAILABILITY_UNCONFIRMED", [owner]);
+            if (selected.some(e => e.owner === owner && e.definition.kind === "championsDefense" && e.definition.name === definition.name)) stop("unsupported", "DUPLICATE_NAMED_EFFECT", [owner]);
+          }
           selected.push({ id, owner, definition });
         }
       };
@@ -89,22 +95,29 @@ export function createDamageEngine(catalogInput: unknown) {
       }
       const context = request.conditions;
       const named = selected.filter(e => e.definition.kind === "champions");
+      const defenses = selected.filter(e => e.definition.kind === "championsDefense");
       const registeredMove = selected.find(e => e.definition.kind === "championsMove");
       const moveName = registeredMove?.definition.kind === "championsMove" ? registeredMove.definition.name : undefined;
       const activity = new Map<string, string>();
       for (const condition of context.supplementary) {
-        if (condition.kind !== "moveEffect" || !named.some(e => e.id === condition.effectId && e.owner === "attacker") || !["active", "suppressed"].includes(condition.optionId)) stop("unsupported", "CONTEXT_RULE_UNSUPPORTED", ["conditions.supplementary"]);
+        if (condition.kind !== "moveEffect") stop("unsupported", "CONTEXT_RULE_UNSUPPORTED", ["conditions.supplementary"]);
+        const offensive = named.some(e => e.id === condition.effectId && e.owner === "attacker") && ["active", "suppressed"].includes(condition.optionId);
+        const defensive = defenses.some(e => e.id === condition.effectId && e.owner === "defender") && defenseContextOptions.some(o => o === condition.optionId);
+        if (!offensive && !defensive) stop("unsupported", "CONTEXT_RULE_UNSUPPORTED", ["conditions.supplementary"]);
         activity.set(condition.effectId, condition.optionId);
       }
       const requestEvidence = () => ({ ...evidence(),
-        sourceIds: [...new Set([...rules.sourceIds, ...(catalog.typeChartEvidence?.sources.map(s => s.id) ?? []), ...selected.flatMap(e => e.definition.kind === "champions" || e.definition.kind === "championsMove" ? e.definition.evidence.sources.map(s => s.id) : [])])],
+        sourceIds: [...new Set([...rules.sourceIds, ...(catalog.typeChartEvidence?.sources.map(s => s.id) ?? []), ...selected.flatMap(e => e.definition.kind === "champions" || e.definition.kind === "championsMove" || e.definition.kind === "championsDefense" ? e.definition.evidence.sources.map(s => s.id) : [])])],
         assumptions: [...evidence().assumptions, ...(moveName ? ["secondary_effects_not_simulated"] : []), ...(moveName === "protect" ? ["protect_defense_not_simulated"] : []), ...(named.length ? ["named_effect_activity_explicitly_resolved"] : []), ...(named.some(e => e.definition.kind === "champions" && e.definition.name === "lifeOrb") ? ["life_orb_recoil_not_in_damage_or_ko_model"] : [])],
       });
       if (catalog.typeChartEvidence && catalog.typeChartEvidence.availability !== "reference_listed") stop("unsupported", "TYPE_CHART_UNCONFIRMED");
       if (context.terrain !== "none" || context.weather === "sand" || context.weather === "snow") stop("unsupported", "CONTEXT_RULE_UNSUPPORTED", ["conditions"]);
       selected.filter(e => e.definition.kind === "neutral").forEach(e => trace.push({ phase: "Resolve", effectId: e.id, owner: e.owner, reason: "explicit_fixture_neutral" }));
       if (registeredMove?.definition.kind === "championsMove") trace.push({ phase: "Resolve", effectId: registeredMove.id, owner: "move", reason: "registered_move_model", sourceIds: registeredMove.definition.evidence.sources.map(s => s.id) });
-      if (move.model === "nonDamaging") return { ...requestEvidence(), status: "nonDamaging", code: "NON_DAMAGING", trace };
+      if (move.model === "nonDamaging") {
+        defenses.forEach(e => trace.push({ phase: "Resolve", effectId: e.id, owner: e.owner, evaluation: "inactive", reason: "non_damaging_attack" }));
+        return { ...requestEvidence(), status: "nonDamaging", code: "NON_DAMAGING", trace };
+      }
       if ((moveName === "rockSlide" || moveName === "waterSpout") && context.targetsActuallyHit > 2) stop("invalid", "MOVE_TARGET_COUNT", ["conditions.targetsActuallyHit"]);
       if (move.model !== "fixed" && move.target === "single" && context.targetsActuallyHit !== 1) stop("invalid", "SINGLE_TARGET_COUNT", ["conditions.targetsActuallyHit"]);
       if (move.type === "ground" && defenderForm.types.includes("flying") && context.defenderGrounded === true) stop("unsupported", "GROUNDED_TYPE_INTERACTION_UNSUPPORTED", ["conditions.defenderGrounded"]);
@@ -123,11 +136,41 @@ export function createDamageEngine(catalogInput: unknown) {
         typeD *= factor === 0.5 ? 2 : 1;
       }
       const immunity = selected.find(e => e.definition.kind === "immunity" && e.owner === "defender" && e.definition.type === move.type);
-      const immune = typeN === 0 || !!immunity;
+      let immune = typeN === 0 || !!immunity;
       if (immune) trace.push({ phase: "Immunity", effectId: immunity?.id, owner: "defender", after: 0, reason: immunity ? "effect_immunity" : "type_immunity" });
       // Resolve intrinsic named rules before collecting phase modifiers. Active state must
       // already account for suppression by the caller; unknown mechanisms are rejected above.
       const namedModifiers: { id: string; phase: "P1" | "A1" | "F4"; factor: number; order: number }[] = [];
+      let statefulDefense = false;
+      for (const effect of defenses) {
+        const def = effect.definition;
+        if (def.kind !== "championsDefense") continue;
+        const phase = def.name === "multiscale" ? "F4" : "Immunity";
+        const entry = { phase, effectId: effect.id, owner: effect.owner, sourceIds: def.evidence.sources.map(s => s.id) };
+        if (effect.owner !== "defender") { trace.push({ ...entry, evaluation: "inactive", reason: "incoming_only" }); continue; }
+        const state = activity.get(effect.id);
+        if (state === "unknown-activity") stop("missingContext", "EFFECT_ACTIVITY_REQUIRED", [`conditions.supplementary.${effect.id}`]);
+        // Explicit unsupported context cannot be erased by an otherwise inactive condition.
+        if (state && state !== "active-single-hit-clear-field") stop("unsupported", "DEFENSE_INTERACTION_UNSUPPORTED", [`conditions.supplementary.${effect.id}`]);
+        if (!moveName || (move.model !== "standard" && moveName !== "waterSpout")) stop("unsupported", "DEFENSE_MOVE_MODEL_UNSUPPORTED", ["moveId"]);
+        if (def.name !== "multiscale" && move.type !== "ground") { trace.push({ ...entry, evaluation: "inactive", reason: "non_ground_attack" }); continue; }
+        if (def.name === "multiscale") {
+          if (request.defender.currentHp === null) stop("missingContext", "DEFENDER_CURRENT_HP_REQUIRED", ["defender.currentHp"]);
+          if (request.defender.currentHp < defenderStats.hp) { trace.push({ ...entry, evaluation: "inactive", reason: "hp_below_maximum" }); continue; }
+        }
+        if (!state) stop("missingContext", "DEFENSE_CONTEXT_REQUIRED", [`conditions.supplementary.${effect.id}`]);
+        if (def.name === "multiscale") {
+          if (immune) { trace.push({ ...entry, evaluation: "inactive", reason: "attack_already_immune" }); continue; }
+          trace.push({ ...entry, evaluation: "active", modifier4096: 2048, reason: "full_hp_initial_single_hit" });
+          namedModifiers.push({ id: effect.id, phase: "F4", factor: 2048, order: 50 });
+          statefulDefense = true;
+        } else {
+          if (context.defenderGrounded === null) stop("missingContext", "GROUNDED_STATE_REQUIRED", ["conditions.defenderGrounded"]);
+          if (context.defenderGrounded) stop("unsupported", "GROUNDING_INTERACTION_UNSUPPORTED", ["conditions.defenderGrounded"]);
+          immune = true;
+          trace.push({ ...entry, evaluation: "active", after: 0, reason: "ground_immunity_no_gravity" });
+        }
+      }
       for (const effect of named) {
         const def = effect.definition;
         if (def.kind !== "champions") continue;
@@ -212,11 +255,15 @@ export function createDamageEngine(catalogInput: unknown) {
       }
       const min = Math.min(...rolls); const max = Math.max(...rolls);
       const currentHp = request.defender.currentHp ?? defenderStats.hp;
-      const ko = analyzeKo(rolls, currentHp);
+      const ko = statefulDefense && !immune
+        ? { kind: "unavailable" as const, reason: "STATEFUL_DEFENSE" as const, oneHitProbability: fraction(BigInt(rolls.filter(n => n >= currentHp).length), BigInt(rolls.length)) }
+        : analyzeKo(rolls, currentHp);
       if (ko.kind === "limitExceeded") stop("unsupported", "KO_RESOURCE_LIMIT");
       const distribution = new Map<number, number>();
       for (const roll of rolls) distribution.set(roll, (distribution.get(roll) ?? 0) + 1);
-      return { ...requestEvidence(), status: "ok", rolls, distribution: [...distribution].map(([damage, count]) => ({ damage, count })), range: { min, max },
+      const resultEvidence = requestEvidence();
+      if (statefulDefense) resultEvidence.assumptions = [...resultEvidence.assumptions.filter(a => a !== "independent_identical_damage_rolls" && a !== "no_healing_or_between_hit_changes"), "initial_single_hit_clear_field_only", "stateful_defense_repeated_ko_not_simulated"];
+      return { ...resultEvidence, status: "ok", rolls, distribution: [...distribution].map(([damage, count]) => ({ damage, count })), range: { min, max },
         damagePercent: { min: fraction(BigInt(min) * 100n, BigInt(defenderStats.hp)), max: fraction(BigInt(max) * 100n, BigInt(defenderStats.hp)) },
         remainingHp: { min: Math.max(0, currentHp - max), max: Math.max(0, currentHp - min) }, maximumHp: defenderStats.hp, currentHp, ko, trace };
     } catch (error) {

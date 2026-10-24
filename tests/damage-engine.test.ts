@@ -110,7 +110,8 @@ describe("ENG-D04/06: ordered provisional condition pipeline", () => {
     const request = makeDamageRequest(); Object.assign(request.defender, { currentHp: 40 });
     const result = ok(calculate(request)); expect(result.remainingHp).toEqual({ min: 0, max: 3 });
     expect(result.damagePercent.max).toEqual({ numerator: "176", denominator: "7" });
-    expect(result.ko.earliestHits).toBe(1);
+    expect(result.ko.kind).not.toBe("unavailable");
+    if (result.ko.kind !== "unavailable") expect(result.ko.earliestHits).toBe(1);
   });
 });
 

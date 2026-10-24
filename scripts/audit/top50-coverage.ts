@@ -4,11 +4,12 @@ import { sourceMetaSchema, resolveForm, mapNature } from "./external-mapping";
 import { statPointsSchema } from "../../src/lib/contracts/schemas";
 import { championsTypes, championsEffectDefinitions } from "../../src/lib/engine/champions-rules";
 import { championsMoveDefinitions } from "../../src/lib/engine/champions-moves";
+import { championsDefenseDefinitions } from "../../src/lib/engine/champions-defense";
 
 const named = z.object({ name: z.string().min(1) });
 const pairs = z.array(z.tuple([z.string().min(1), z.number().min(0).max(100)]))
   .refine(rows => new Set(rows.map(r => r[0])).size === rows.length, "Duplicate marginal names");
-const metaSchema = sourceMetaSchema.extend({ pokemon: z.array(sourceMetaSchema.shape.pokemon.element.extend({
+export const coverageMetaSchema = sourceMetaSchema.extend({ pokemon: z.array(sourceMetaSchema.shape.pokemon.element.extend({
   moves: pairs, items: pairs, abilities: pairs, natures: pairs,
   spreads: z.array(z.tuple([z.number().min(0).max(100), z.array(z.number()).length(6)])),
 })) });
@@ -23,8 +24,10 @@ function metric(numerator: number, denominator: number) {
   return { numerator, denominator, percent: denominator ? Number((100*numerator/denominator).toFixed(4)) : null };
 }
 const moveRules = new Map(Object.values(championsMoveDefinitions).map(m => [m.referenceName, m.model]));
-const abilityRules = new Set(["Technician", "Huge Power"]);
-const itemRules = new Set(["Life Orb"]);
+export const candidateAbilityNames = ["Technician", "Huge Power", "Levitate", "Multiscale"] as const;
+export const candidateItemNames = ["Life Orb", "Air Balloon"] as const;
+const abilityRules = new Set<string>(candidateAbilityNames);
+const itemRules = new Set<string>(candidateItemNames);
 type Frequency = { name: string; templateRows: number; marginalRows: number; marginalPercentSum: number };
 function increment(map: Map<string, Frequency>, name: string, kind: "templateRows" | "marginalRows", rate = 0) {
   const row = map.get(name) ?? { name, templateRows: 0, marginalRows: 0, marginalPercentSum: 0 };
@@ -38,7 +41,7 @@ const candidateNames = {
 };
 
 export function auditFormatCoverage(rawMeta: unknown, rawResources: unknown) {
-  const source = metaSchema.parse(rawMeta); const resources = coverageResourcesSchema.parse(rawResources);
+  const source = coverageMetaSchema.parse(rawMeta); const resources = coverageResourcesSchema.parse(rawResources);
   const rows = source.pokemon.filter(row => row.position <= 50);
   if (rows.length !== 50 || new Set(rows.map(r => r.name)).size !== 50 || new Set(rows.map(r => r.position)).size !== 50)
     throw new Error("INCOMPLETE_OR_DUPLICATE_TOP50");
@@ -127,7 +130,7 @@ export function auditFormatCoverage(rawMeta: unknown, rawResources: unknown) {
       abilityLegalityAmongKnownForms: metric(legalAbilityOnKnownRows,knownFormRows), physicalStatAlignmentVerified: false, rawPointCompleteness: null, rawNatureCompleteness: null },
     rules: { defenderAbility: metric(abilityModelRows,n), defenderItem: metric(itemModelRows,n), defenderAbilityAndItem: metric(pairModelRows,n),
       formBindings: metric(0,n), integratedRealCatalogRows: metric(0,n), marginalAbilities: coverageByKind("abilities",abilityRules), marginalItems: coverageByKind("items",itemRules),
-      scope: "Named candidate models only; the three existing effects are outgoing-only for defenders under the five supported direct/status move models. No other effect is inferred neutral." },
+      scope: "Named candidate models only; original three effects are outgoing-only, and three scoped defensive candidates require independently resolved context under the six supported move models. No other effect is inferred neutral." },
     production: { eligibleRows: metric(0,n), basis: "global RULES_NOT_APPROVED and absent approved real catalog; policy eligibility, not observed success", measuredCalculationSuccess: null },
     gameEvidence: { rankRows: metric(0,n), damageRows: metric(0,n), measuredGameAccuracy: null },
     attack: { templateSlots: metric(templateModels,templateSlots), templateDamageSlots: metric(templateDamage,templateSlots), templateMissingMoves, templateExcludedSlots,
@@ -142,6 +145,6 @@ export function auditFormatCoverage(rawMeta: unknown, rawResources: unknown) {
     frequencies: Object.fromEntries((["abilities","items","moves"] as const).map(kind => [kind,{ byTemplate: top(kind,"templateRows"), byMarginalMass: top(kind,"marginalPercentSum") }])),
     priorityEvidence: Object.fromEntries((Object.keys(candidateNames) as (keyof typeof candidateNames)[]).map(kind => [kind,candidateNames[kind].map(name => rounded(frequency[kind].get(name) ?? { name,templateRows:0,marginalRows:0,marginalPercentSum:0 }))])),
     limitations: ["Representative sets combine independent category tops and may contain upstream defaults/clamps, not observed joint builds", "Item marginals may mix mega stones and baseline forms; no cross-form combination inferred", "All real master inclusion/provenance remains unconfirmed/provisional", "No actual real-data calculation was attempted"],
-    registeredCandidateEffects: Object.keys(championsEffectDefinitions),
+    registeredCandidateEffects: [...Object.keys(championsEffectDefinitions), ...Object.keys(championsDefenseDefinitions)],
   };
 }

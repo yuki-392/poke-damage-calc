@@ -1,14 +1,14 @@
-/** Five L2 candidate move models. Not form/learnset/regulation approval.
+/** Limited L2 candidate move models. Not form/learnset/regulation approval.
  * Facts from Smogon damage-calc 0.12.0 (MIT), normalized into engine models.
  * Copyright (c) 2013-2025 Honko and other contributors. See THIRD_PARTY_NOTICES.md.
  */
 import type { EffectDefinition, EngineCatalog } from "./contracts";
 const revision = "d7a69cf40616057ef40faf7623df7a628e58b535";
 const base = `https://github.com/smogon/damage-calc/blob/${revision}/calc/src`;
-type Name = "earthquake" | "rockSlide" | "flamethrower" | "waterSpout" | "protect";
+type Name = "earthquake" | "rockSlide" | "flamethrower" | "waterSpout" | "protect" | "shadowBall";
 function effect(name: Name): Extract<EffectDefinition, { kind: "championsMove" }> {
   return { kind: "championsMove", name, evidence: {
-    profileId: "smogon-calc-0.12.0-champions-p2b2", checkedAt: "2026-10-24",
+    profileId: name === "shadowBall" ? "smogon-calc-0.12.0-champions-p2b4" : "smogon-calc-0.12.0-champions-p2b2", checkedAt: "2026-10-24",
     availability: "reference_listed", verification: "supported_unverified", gameEvidenceIds: [],
     sources: [
       { id: `smogon-0.12.0:move-${name}-list`, url: `${base}/data/moves.ts#L4938-L5501`, revision },
@@ -17,6 +17,8 @@ function effect(name: Name): Extract<EffectDefinition, { kind: "championsMove" }
   } };
 }
 export const championsMoveDefinitions = {
+  shadowBall: { referenceName: "Shadow Ball", reference: { power: 80, type: "Ghost", category: "Special", target: "any", priority: 0 },
+    model: { model: "standard", power: 80, type: "ghost", category: "special", target: "single" }, effect: effect("shadowBall") },
   earthquake: { referenceName: "Earthquake", reference: { power: 100, type: "Ground", category: "Physical", target: "allAdjacent", priority: 0 },
     model: { model: "standard", power: 100, type: "ground", category: "physical", target: "spread" }, effect: effect("earthquake") },
   rockSlide: { referenceName: "Rock Slide", reference: { power: 75, type: "Rock", category: "Physical", target: "allAdjacentFoes", priority: 0 },

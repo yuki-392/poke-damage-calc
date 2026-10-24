@@ -1,0 +1,545 @@
+{
+  "auditedAt": "2026-10-24T03:10:19.494Z",
+  "scope": "Phase 2-B stage 4 candidate delta only",
+  "sources": [
+    {
+      "key": "meta-singles",
+      "url": "https://championsbattledata.com/data/builder/meta-singles.json",
+      "sha256": "bfe4595c99bd1a843e3ba1758c376c5a623831f56cdd776c3500de344a79b80d",
+      "fetchedAt": "2026-10-24T03:04:45.531551+00:00"
+    },
+    {
+      "key": "meta-doubles",
+      "url": "https://championsbattledata.com/data/builder/meta-doubles.json",
+      "sha256": "384b8da6718c2cdc6d305c6e80f9c13fa6ea1e74819fee52767f3a5410b90ce6",
+      "fetchedAt": "2026-10-24T03:04:46.027251+00:00"
+    }
+  ],
+  "implementationEvidence": [
+    {
+      "path": "src/lib/engine/engine.ts",
+      "sha256": "adb55f90a0e6e596ce6008a2c70a0c199e3f0721e18733efd14fc366653966c8"
+    },
+    {
+      "path": "src/lib/engine/contracts.ts",
+      "sha256": "8afa1130ed8768ebe620a63f353d630b0166b2cf18de241214f4b3a1f48417c3"
+    },
+    {
+      "path": "src/lib/engine/champions-defense.ts",
+      "sha256": "6a91487c94dee6b6ecf4cc44918a6580b8d28e36cd502c8c360f2e29cb35ff47"
+    },
+    {
+      "path": "src/lib/engine/champions-moves.ts",
+      "sha256": "b7ddb50de12eb814743e0b3dc0838bef8ed736d31a97f7cd378e3738af8fa7dc"
+    },
+    {
+      "path": "scripts/audit/phase2b4-coverage.ts",
+      "sha256": "74cbb9c49d1d29db582a90ae43d18bb8ba7b1a78573859892e88f29c1f4a73e4"
+    }
+  ],
+  "baseline": {
+    "path": "docs/validation/phase-2b3-coverage.json",
+    "sha256": "149d97c6aa403fc83ac88440b60eb7c4043761efd75e44feac2d8534f51ddbd6",
+    "exactSourceHashesMatched": true
+  },
+  "formats": [
+    {
+      "format": "Singles",
+      "generatedAt": "2026-10-23T16:54:01.962Z",
+      "rows": 50,
+      "before": {
+        "ability": {
+          "numerator": 1,
+          "denominator": 50,
+          "percent": 2
+        },
+        "item": {
+          "numerator": 1,
+          "denominator": 50,
+          "percent": 2
+        },
+        "pair": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "templateModels": {
+          "numerator": 15,
+          "denominator": 200,
+          "percent": 7.5
+        },
+        "templateDamage": {
+          "numerator": 14,
+          "denominator": 200,
+          "percent": 7
+        },
+        "marginalModels": {
+          "numerator": 28,
+          "denominator": 500,
+          "percent": 5.6
+        },
+        "marginalDamage": {
+          "numerator": 21,
+          "denominator": 500,
+          "percent": 4.2
+        },
+        "marginalModelMass": {
+          "numerator": 1209.3,
+          "denominator": 18826.6,
+          "percent": 6.4234
+        },
+        "marginalDamageMass": {
+          "numerator": 1010.6,
+          "denominator": 18826.6,
+          "percent": 5.3679
+        },
+        "marginalAbilityMentions": {
+          "numerator": 1,
+          "denominator": 105,
+          "percent": 0.9524
+        },
+        "marginalItemMentions": {
+          "numerator": 43,
+          "denominator": 500,
+          "percent": 8.6
+        }
+      },
+      "after": {
+        "ability": {
+          "numerator": 5,
+          "denominator": 50,
+          "percent": 10
+        },
+        "item": {
+          "numerator": 2,
+          "denominator": 50,
+          "percent": 4
+        },
+        "pair": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "templateModels": {
+          "numerator": 18,
+          "denominator": 200,
+          "percent": 9
+        },
+        "templateDamage": {
+          "numerator": 17,
+          "denominator": 200,
+          "percent": 8.5
+        },
+        "marginalModels": {
+          "numerator": 34,
+          "denominator": 500,
+          "percent": 6.8
+        },
+        "marginalDamage": {
+          "numerator": 27,
+          "denominator": 500,
+          "percent": 5.4
+        },
+        "marginalModelMass": {
+          "numerator": 1480.5,
+          "denominator": 18826.6,
+          "percent": 7.8639
+        },
+        "marginalDamageMass": {
+          "numerator": 1281.8,
+          "denominator": 18826.6,
+          "percent": 6.8085
+        },
+        "marginalAbilityMentions": {
+          "numerator": 5,
+          "denominator": 105,
+          "percent": 4.7619
+        },
+        "marginalItemMentions": {
+          "numerator": 65,
+          "denominator": 500,
+          "percent": 13
+        }
+      },
+      "productionEligible": {
+        "numerator": 0,
+        "denominator": 50,
+        "percent": 0
+      },
+      "gameVerified": {
+        "numerator": 0,
+        "denominator": 50,
+        "percent": 0
+      },
+      "conditionResolvedRows": null,
+      "realDataCalculationsExecuted": 0,
+      "realDataCatalogPromotions": 0,
+      "scope": "Candidate model existence only, conditional on supported inputs. Template co-occurrence is not observed joint usage; marginal percentage-point sums are not population usage. No HP/activity/hazard context is supplied by this audit.",
+      "unchangedDataResolution": {
+        "formId": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "masterForm": {
+          "numerator": 36,
+          "denominator": 50,
+          "percent": 72
+        },
+        "baseStats": {
+          "numerator": 36,
+          "denominator": 50,
+          "percent": 72
+        },
+        "types": {
+          "numerator": 36,
+          "denominator": 50,
+          "percent": 72
+        },
+        "points": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "abilityName": {
+          "numerator": 44,
+          "denominator": 50,
+          "percent": 88
+        },
+        "abilityFormLink": {
+          "numerator": 36,
+          "denominator": 50,
+          "percent": 72
+        },
+        "itemName": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "nature": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "allRepresentativeFields": {
+          "numerator": 36,
+          "denominator": 50,
+          "percent": 72
+        },
+        "abilityLegalityAmongKnownForms": {
+          "numerator": 36,
+          "denominator": 36,
+          "percent": 100
+        },
+        "physicalStatAlignmentVerified": false,
+        "rawPointCompleteness": null,
+        "rawNatureCompleteness": null
+      },
+      "unchangedMissingMaster": {
+        "forms": [
+          "Baxcalibur",
+          "Blaziken",
+          "Cinderace",
+          "Gholdengo",
+          "Golisopod",
+          "Indeedee",
+          "Metagross",
+          "Pawmot",
+          "Rillaboom",
+          "Rotom-Heat",
+          "Rotom-Wash",
+          "Salamence",
+          "Staraptor",
+          "Swampert"
+        ],
+        "abilities": [
+          "Emergency Exit",
+          "Good as Gold",
+          "Grassy Surge",
+          "Libero",
+          "Psychic Surge",
+          "Thermal Exchange"
+        ],
+        "items": [],
+        "natures": [],
+        "templateExcludedMoves": [
+          "Double Shock",
+          "Drum Beating",
+          "Glaive Rush",
+          "Make It Rain",
+          "Pyro Ball",
+          "Revival Blessing"
+        ],
+        "marginalExcludedMoves": [
+          "Court Change",
+          "Double Shock",
+          "Drum Beating",
+          "Glaive Rush",
+          "Make It Rain",
+          "Pyro Ball",
+          "Revival Blessing"
+        ]
+      },
+      "numericMassOverReportedDamagingMoves": {
+        "numerator": 1281.8,
+        "denominator": 13450.7,
+        "percent": 9.5296
+      }
+    },
+    {
+      "format": "Doubles",
+      "generatedAt": "2026-10-23T16:54:01.962Z",
+      "rows": 50,
+      "before": {
+        "ability": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "item": {
+          "numerator": 3,
+          "denominator": 50,
+          "percent": 6
+        },
+        "pair": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "templateModels": {
+          "numerator": 46,
+          "denominator": 200,
+          "percent": 23
+        },
+        "templateDamage": {
+          "numerator": 7,
+          "denominator": 200,
+          "percent": 3.5
+        },
+        "marginalModels": {
+          "numerator": 66,
+          "denominator": 500,
+          "percent": 13.2
+        },
+        "marginalDamage": {
+          "numerator": 19,
+          "denominator": 500,
+          "percent": 3.8
+        },
+        "marginalModelMass": {
+          "numerator": 3851,
+          "denominator": 18951,
+          "percent": 20.3208
+        },
+        "marginalDamageMass": {
+          "numerator": 728.9,
+          "denominator": 18951,
+          "percent": 3.8462
+        },
+        "marginalAbilityMentions": {
+          "numerator": 0,
+          "denominator": 120,
+          "percent": 0
+        },
+        "marginalItemMentions": {
+          "numerator": 47,
+          "denominator": 500,
+          "percent": 9.4
+        }
+      },
+      "after": {
+        "ability": {
+          "numerator": 1,
+          "denominator": 50,
+          "percent": 2
+        },
+        "item": {
+          "numerator": 3,
+          "denominator": 50,
+          "percent": 6
+        },
+        "pair": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "templateModels": {
+          "numerator": 50,
+          "denominator": 200,
+          "percent": 25
+        },
+        "templateDamage": {
+          "numerator": 11,
+          "denominator": 200,
+          "percent": 5.5
+        },
+        "marginalModels": {
+          "numerator": 72,
+          "denominator": 500,
+          "percent": 14.4
+        },
+        "marginalDamage": {
+          "numerator": 25,
+          "denominator": 500,
+          "percent": 5
+        },
+        "marginalModelMass": {
+          "numerator": 4259.8,
+          "denominator": 18951,
+          "percent": 22.478
+        },
+        "marginalDamageMass": {
+          "numerator": 1137.7,
+          "denominator": 18951,
+          "percent": 6.0034
+        },
+        "marginalAbilityMentions": {
+          "numerator": 1,
+          "denominator": 120,
+          "percent": 0.8333
+        },
+        "marginalItemMentions": {
+          "numerator": 55,
+          "denominator": 500,
+          "percent": 11
+        }
+      },
+      "productionEligible": {
+        "numerator": 0,
+        "denominator": 50,
+        "percent": 0
+      },
+      "gameVerified": {
+        "numerator": 0,
+        "denominator": 50,
+        "percent": 0
+      },
+      "conditionResolvedRows": null,
+      "realDataCalculationsExecuted": 0,
+      "realDataCatalogPromotions": 0,
+      "scope": "Candidate model existence only, conditional on supported inputs. Template co-occurrence is not observed joint usage; marginal percentage-point sums are not population usage. No HP/activity/hazard context is supplied by this audit.",
+      "unchangedDataResolution": {
+        "formId": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "masterForm": {
+          "numerator": 38,
+          "denominator": 50,
+          "percent": 76
+        },
+        "baseStats": {
+          "numerator": 38,
+          "denominator": 50,
+          "percent": 76
+        },
+        "types": {
+          "numerator": 38,
+          "denominator": 50,
+          "percent": 76
+        },
+        "points": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "abilityName": {
+          "numerator": 45,
+          "denominator": 50,
+          "percent": 90
+        },
+        "abilityFormLink": {
+          "numerator": 38,
+          "denominator": 50,
+          "percent": 76
+        },
+        "itemName": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "nature": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "allRepresentativeFields": {
+          "numerator": 38,
+          "denominator": 50,
+          "percent": 76
+        },
+        "abilityLegalityAmongKnownForms": {
+          "numerator": 38,
+          "denominator": 38,
+          "percent": 100
+        },
+        "physicalStatAlignmentVerified": false,
+        "rawPointCompleteness": null,
+        "rawNatureCompleteness": null
+      },
+      "unchangedMissingMaster": {
+        "forms": [
+          "Annihilape",
+          "Basculegion-F",
+          "Gholdengo",
+          "Golisopod",
+          "Grimmsnarl",
+          "Indeedee",
+          "Indeedee-F",
+          "Metagross",
+          "Rillaboom",
+          "Salamence",
+          "Staraptor",
+          "Swampert"
+        ],
+        "abilities": [
+          "Emergency Exit",
+          "Good as Gold",
+          "Grassy Surge",
+          "Psychic Surge"
+        ],
+        "items": [],
+        "natures": [],
+        "templateExcludedMoves": [
+          "Make It Rain",
+          "Rage Fist",
+          "Spirit Break"
+        ],
+        "marginalExcludedMoves": [
+          "Drum Beating",
+          "Make It Rain",
+          "Rage Fist",
+          "Spirit Break"
+        ]
+      },
+      "numericMassOverReportedDamagingMoves": {
+        "numerator": 1137.7,
+        "denominator": 11611.6,
+        "percent": 9.798
+      }
+    }
+  ],
+  "attribution": [
+    {
+      "label": "Battle data provided by Pokémon Champions Battle Data",
+      "url": "https://championsbattledata.com/",
+      "terms": "https://championsbattledata.com/api-rules/",
+      "storage": "Only aggregate diagnostics retained. This run's raw temporary files must be removed after verification."
+    },
+    {
+      "label": "Pokemon Champions Data Contributors",
+      "url": "https://github.com/otterlyclueless/pokemon-champions-data",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "changes": "Name/alias lookups and aggregate missing-field counts. No source fields or approval flags changed."
+    }
+  ],
+  "retention": {
+    "rawResponsesCommitted": false,
+    "rawCacheDeletedAt": "2026-10-24T03:14:14.249137+00:00"
+  },
+  "gameVerified": false,
+  "rankingProvenance": "unverified_rank",
+  "P0_05": "unverified",
+  "P0_06": "unverified"
+}

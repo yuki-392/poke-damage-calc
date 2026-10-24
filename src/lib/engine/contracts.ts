@@ -21,7 +21,8 @@ export const ruleEvidenceSchema = z.strictObject({
 });
 export const effectDefinitionSchema = z.discriminatedUnion("kind", [
   z.strictObject({ kind: z.literal("neutral") }),
-  z.strictObject({ kind: z.literal("championsMove"), name: z.enum(["earthquake", "rockSlide", "flamethrower", "waterSpout", "protect"]), evidence: ruleEvidenceSchema }),
+  z.strictObject({ kind: z.literal("championsMove"), name: z.enum(["earthquake", "rockSlide", "flamethrower", "waterSpout", "protect", "shadowBall"]), evidence: ruleEvidenceSchema }),
+  z.strictObject({ kind: z.literal("championsDefense"), name: z.enum(["levitate", "airBalloon", "multiscale"]), evidence: ruleEvidenceSchema }),
   z.strictObject({ kind: z.literal("champions"), name: z.enum(["technician", "hugePower", "lifeOrb"]), evidence: ruleEvidenceSchema }),
   z.strictObject({ kind: z.literal("unsupported"), reason: idSchema }),
   z.strictObject({ kind: z.literal("immunity"), scope: z.literal("defender"), type: idSchema }),
@@ -41,10 +42,10 @@ export const engineCatalogSchema = z.strictObject({
 export type DamageRequest = z.infer<typeof damageRequestSchema>;
 export type EffectDefinition = z.infer<typeof effectDefinitionSchema>;
 export type EngineCatalog = z.infer<typeof engineCatalogSchema>;
-export type TraceEntry = { phase: string; effectId?: string; owner?: string; before?: number; after?: number; modifier4096?: number; rounding?: "floor" | "halfUp" | "halfDown"; roll?: number; suppressed?: boolean; reason?: string; sourceIds?: string[] };
+export type TraceEntry = { phase: string; effectId?: string; owner?: string; evaluation?: "active" | "inactive"; before?: number; after?: number; modifier4096?: number; rounding?: "floor" | "halfUp" | "halfDown"; roll?: number; suppressed?: boolean; reason?: string; sourceIds?: string[] };
 export type FailureStatus = "invalid" | "unsupported" | "missingContext";
 export type Failure = { status: FailureStatus; code: string; messageKey: string; fieldPaths: string[]; missingKeys: string[]; sourceVersions: SourceVersions; sourceIds: string[] };
 type Evidence = { verification: "fixture_only"; gameVerified: false; sourceVersions: SourceVersions; sourceIds: string[]; assumptions: string[] };
 export type DamageResult = Failure
   | (Evidence & { status: "nonDamaging"; code: "NON_DAMAGING"; trace: TraceEntry[] })
-  | (Evidence & { status: "ok"; rolls: number[]; distribution: { damage: number; count: number }[]; range: { min: number; max: number }; damagePercent: { min: Fraction; max: Fraction }; remainingHp: { min: number; max: number }; maximumHp: number; currentHp: number; ko: Exclude<KoAnalysis, { kind: "limitExceeded" }>; trace: TraceEntry[] });
+  | (Evidence & { status: "ok"; rolls: number[]; distribution: { damage: number; count: number }[]; range: { min: number; max: number }; damagePercent: { min: Fraction; max: Fraction }; remainingHp: { min: number; max: number }; maximumHp: number; currentHp: number; ko: Exclude<KoAnalysis, { kind: "limitExceeded" }> | { kind: "unavailable"; reason: "STATEFUL_DEFENSE"; oneHitProbability: Fraction }; trace: TraceEntry[] });

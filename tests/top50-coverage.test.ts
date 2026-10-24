@@ -18,6 +18,15 @@ function fixture() {
 }
 
 describe("TOP50 audit denominators and safety (synthetic data)", () => {
+  it("counts only explicitly added defensive candidates and Shadow Ball, without granting execution", () => {
+    const f = fixture();
+    for (const row of f.meta.pokemon) { row.set.ability = "Levitate"; row.set.item = "Air Balloon"; row.set.moves[0] = "Shadow Ball"; }
+    const r = auditFormatCoverage(f.meta, f.resources);
+    expect(r.rules.defenderAbility.numerator).toBe(50); expect(r.rules.defenderItem.numerator).toBe(50);
+    expect(r.rules.defenderAbilityAndItem.numerator).toBe(50);
+    expect(r.production.eligibleRows.numerator).toBe(0); expect(r.gameEvidence.damageRows.numerator).toBe(0);
+    expect(r.registeredCandidateEffects).toContain("multiscale");
+  });
   it("separates lookup, rule availability, binding, execution and game evidence", () => {
     const f = fixture(); const r = auditFormatCoverage(f.meta, f.resources);
     expect(r.data.allRepresentativeFields.numerator).toBe(50);

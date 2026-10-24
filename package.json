@@ -23,6 +23,8 @@
     "audit:l2": "node --import tsx scripts/audit/l2-comparison.ts",
     "audit:l2:phase2b": "node --import tsx scripts/audit/l2-comparison.ts --phase2b",
     "audit:l2:phase2b2": "node --import tsx scripts/audit/l2-comparison.ts --phase2b2",
+    "audit:l2:phase2b4": "node --import tsx scripts/audit/phase2b4-l2.ts",
+    "audit:coverage:phase2b4": "node --import tsx scripts/audit/phase2b4-coverage.ts",
     "audit:coverage": "node --import tsx scripts/audit/run-top50-coverage.ts"
   },
   "dependencies": {

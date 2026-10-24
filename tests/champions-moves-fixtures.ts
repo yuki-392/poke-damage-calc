@@ -13,7 +13,7 @@ export function makeNamedMoveFixture(name: NamedMove, effect?: NamedEffect) {
     catalog.master.learnsets[0]!.moveIds.push(id);
   }
   for (const key of ["ruleVersion", "masterDataVersion", "effectCatalogVersion"] as const) {
-    catalog.master.sourceVersions[key] += "-p2b2";
+    catalog.master.sourceVersions[key] += "-p2b2-p2b4";
     catalog.rules.sourceVersions[key] = catalog.master.sourceVersions[key];
   }
   request.sourceVersions = { ...catalog.rules.sourceVersions }; request.moveId = `move:${name}`;
