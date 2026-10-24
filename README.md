@@ -1,6 +1,6 @@
 # ChampionCalc
 
-Pokémon Champions専用ダメージ計算Webアプリ。**Phase 0の環境確認は完了。Phase 1の契約コードは実装済みですが、実データ全件の意味整合は未完了**です。計算エンジン、ランキング取得運用、通常/TOP50の入力画面、認証、個人保存は後続フェーズです。共有URL機能は実装しません。
+Pokémon Champions専用ダメージ計算Webアプリ。**Phase 0は完了、Phase 1の実データの意味整合は未完了、Phase 2はfixture向け基礎計算コアを部分実装**しています。ランキング取得運用、通常/TOP50の入力画面、認証、個人保存は後続フェーズです。共有URL機能は実装しません。
 
 開発用ページは未実装状態を明示し、架空の順位やダメージを配信しません。自動テストの合格はゲーム本体との一致を意味しません。P0-04/P0-05/P0-06・権利・セキュリティの公開ゲートは未通過です。
 
@@ -59,6 +59,10 @@ pnpm exec supabase start
 - `design/champions-codex-handoff-v1.0/START_HERE.md`: 正式設計資料。77ファイルのSHA-256一致を確認済み。
 - `docs/implementation-plan.md`: スコープ・構成・Phase 0〜8の順序。
 - `docs/phase-0-1-report.md`: 初回実装の変更・試験結果・制限。
+- `docs/phase-2-report.md`: 純粋な共通計算コアの対応/未対応、fixture実行ゲート、DTO整合、145テストの結果。
+- `docs/phase-2-verification-matrix.md`: P0-06の47ケースとL1/未対応の対応。
 - `docs/release-audit.md`: 実機確認と公開ブロッカー。
 
-原本の旧共有記述は参考に残りますが、製品の実装対象ではありません。現在はPhase 0・1の確認を優先し、Phase 2へは進んでいません。本番デプロイ・課金設定の変更は別途承認が必要です。
+計算コアは `src/lib/engine/` の `createDamageEngine()` から利用します。通常/TOP50は同じ`calculateDamage`を呼びます。数値演算は明示的fixtureに限定し、productionや未承認効果には数値を返しません。製品用の実マスター/タイプ表は同梱せず、画面にも接続していません。
+
+原本の旧共有記述は参考に残りますが、製品の実装対象ではありません。現在はPhase 2のみを実装しており、後続Phaseには進んでいません。本番デプロイ・課金設定の変更は別途承認が必要です。

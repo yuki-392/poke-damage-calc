@@ -1,0 +1,205 @@
+import { z } from "zod";
+import { normalSavedInputSchema, rankingSchema, top50SavedInputSchema } from "../contracts/schemas";
+import { createContractValidator } from "../contracts/validation";
+import { damageRequestSchema, engineCatalogSchema, type DamageResult, type EffectDefinition, type Failure, type FailureStatus, type TraceEntry } from "./contracts";
+import { analyzeKo, fraction } from "./ko";
+import { applyRatio, applyStage, baseDamage, combine4096, resolveStats } from "./math";
+
+class Stop extends Error {
+  constructor(readonly status: FailureStatus, readonly code: string, readonly paths: string[] = []) { super(code); }
+}
+function stop(status: FailureStatus, code: string, paths: string[] = []): never { throw new Stop(status, code, paths); }
+
+/** Trusted, versioned catalogs are parsed/copied once. No singleton, I/O or UI state.
+ * Only explicit fixtures can produce numbers in this phase. No game-approved profile ships.
+ */
+export function createDamageEngine(catalogInput: unknown) {
+  const catalog = engineCatalogSchema.parse(catalogInput);
+  const { master, rules } = catalog;
+  const contracts = createContractValidator(master, []);
+  const forms = new Map(master.forms.map(f => [f.id, f]));
+  const abilities = new Map(master.abilities.map(a => [a.id, a]));
+  const items = new Map(master.items.map(i => [i.id, i]));
+  const moves = new Map(master.moves.map(m => [m.id, m]));
+  const effects = new Map(master.effects.map(e => [e.id, e]));
+  const failure = (status: FailureStatus, code: string, paths: string[] = []): Failure => ({ status, code, messageKey: `engine.${code}`, fieldPaths: [...paths], missingKeys: status === "missingContext" ? [...paths] : [], sourceVersions: { ...rules.sourceVersions }, sourceIds: [...rules.sourceIds] });
+  const evidence = () => ({ verification: "fixture_only" as const, gameVerified: false as const, sourceVersions: { ...rules.sourceVersions }, sourceIds: [...rules.sourceIds], assumptions: ["conditional_on_hits", "independent_identical_damage_rolls", "no_healing_or_between_hit_changes", "no_accuracy_or_secondary_effect_probability", "fixture_rules_not_game_verified"] });
+
+  const calculateDamage = (requestInput: unknown): DamageResult => {
+    try {
+      const parsed = damageRequestSchema.safeParse(requestInput);
+      if (!parsed.success) return failure("invalid", "INVALID_REQUEST", parsed.error.issues.map(i => i.path.join(".")));
+      const request = parsed.data;
+      if (Object.entries(rules.sourceVersions).some(([key, value]) => request.sourceVersions[key as keyof typeof request.sourceVersions] !== value)) return failure("invalid", "VERSION_INCOMPATIBLE", ["sourceVersions"]);
+      for (const [owner, build] of [["attacker", request.attacker], ["defender", request.defender]] as const) {
+        const form = forms.get(build.pokemonFormId);
+        if (form && form.inclusion !== "confirmed") stop("unsupported", "FORM_INCLUSION_UNCONFIRMED", [`${owner}.pokemonFormId`]);
+      }
+      const validated = contracts.snapshot.safeParse({ payloadSchemaVersion: 1, mode: "normal", input: { format: request.format, attacker: request.attacker, defender: request.defender, moves: [request.moveId], conditions: request.conditions, sourceVersions: request.sourceVersions } });
+      if (!validated.success) return failure("invalid", "INVALID_BUILD_OR_CONTEXT", validated.error.issues.map(i => i.path.join(".")));
+      if (catalog.execution !== "fixture") stop("unsupported", "RULES_NOT_APPROVED");
+      const trace: TraceEntry[] = [];
+      const attackerForm = forms.get(request.attacker.pokemonFormId)!;
+      const defenderForm = forms.get(request.defender.pokemonFormId)!;
+      const actorStats = (owner: "attacker" | "defender") => {
+        const build = request[owner]; const form = forms.get(build.pokemonFormId)!;
+        const model = catalog.formRules[form.id]?.statModel;
+        if (!model || model === "unsupported") stop("unsupported", "FORM_RULE_UNSUPPORTED", [`${owner}.pokemonFormId`]);
+        if (!form.baseStats) stop("unsupported", "BASE_STATS_UNAVAILABLE", [`${owner}.pokemonFormId`]);
+        const stats = resolveStats(form.baseStats!, build, model);
+        if (build.currentHp !== null && build.currentHp > stats.hp) stop("invalid", "CURRENT_HP_EXCEEDS_MAX", [`${owner}.currentHp`]);
+        return stats;
+      };
+      const attackerStats = actorStats("attacker"); const defenderStats = actorStats("defender");
+      const move = catalog.moves[request.moveId];
+      if (!move) stop("unsupported", "MOVE_MODEL_UNCLASSIFIED", ["moveId"]);
+      if (move.model === "unsupported") stop("unsupported", move.reason, ["moveId"]);
+      const selected: { id: string; owner: string; definition: EffectDefinition }[] = [];
+      const collect = (ids: string[], owner: string) => {
+        if (!ids.length) stop("unsupported", "EFFECT_UNCLASSIFIED", [owner]);
+        if (new Set(ids).size !== ids.length) stop("unsupported", "DUPLICATE_EFFECT_ID", [owner]);
+        for (const id of ids) {
+          const effect = effects.get(id); const definition = catalog.effects[id];
+          if (!effect || !definition) stop("unsupported", "EFFECT_UNCLASSIFIED", [owner]);
+          if (effect.support === "unsupported") stop("unsupported", "EFFECT_UNSUPPORTED", [owner]);
+          if (definition.kind === "unsupported") stop("unsupported", definition.reason, [owner]);
+          if (effect.support === "audited_neutral" && definition.kind !== "neutral") stop("unsupported", "EFFECT_CLASSIFICATION_CONFLICT", [owner]);
+          selected.push({ id, owner, definition });
+        }
+      };
+      collect(moves.get(request.moveId)!.effectIds, "move");
+      for (const owner of ["attacker", "defender"] as const) {
+        const build = request[owner];
+        if (build.abilityId !== null) collect(abilities.get(build.abilityId)!.effectIds, owner);
+        if (build.item.kind === "customText") stop("unsupported", "UNRESOLVED_ITEM", [`${owner}.item`]);
+        if (build.item.kind === "known") collect(items.get(build.item.itemId)!.effectIds, owner);
+      }
+      const context = request.conditions;
+      if (context.terrain !== "none" || context.weather === "sand" || context.weather === "snow" || context.supplementary.length) stop("unsupported", "CONTEXT_RULE_UNSUPPORTED", ["conditions"]);
+      selected.filter(e => e.definition.kind === "neutral").forEach(e => trace.push({ phase: "Resolve", effectId: e.id, owner: e.owner, reason: "explicit_fixture_neutral" }));
+      if (move.model === "nonDamaging") return { ...evidence(), status: "nonDamaging", code: "NON_DAMAGING", trace };
+      if (move.model !== "fixed" && move.target === "single" && context.targetsActuallyHit !== 1) stop("invalid", "SINGLE_TARGET_COUNT", ["conditions.targetsActuallyHit"]);
+      const chart = catalog.typeChart[move.type];
+      let typeN = 1; let typeD = 1;
+      for (const type of defenderForm.types) {
+        const factor = chart?.[type];
+        if (factor === undefined) stop("unsupported", "TYPE_CHART_INCOMPLETE", ["defender.pokemonFormId"]);
+        typeN *= factor === 0 ? 0 : factor === 2 ? 2 : 1;
+        typeD *= factor === 0.5 ? 2 : 1;
+      }
+      const immunity = selected.find(e => e.definition.kind === "immunity" && e.owner === "defender" && e.definition.type === move.type);
+      const immune = typeN === 0 || !!immunity;
+      if (immune) trace.push({ phase: "Immunity", effectId: immunity?.id, owner: "defender", after: 0, reason: immunity ? "effect_immunity" : "type_immunity" });
+      const modifiersFor = (phase: "P1" | "A1" | "D1" | "F4") => {
+        const active: { id: string; factor: number; order: number }[] = [];
+        for (const effect of selected) {
+          const def = effect.definition;
+          if (def.kind !== "multiplier" || def.phase !== phase) continue;
+          const matches = def.scope === effect.owner && (def.category === "any" || (move.model !== "fixed" && def.category === move.category));
+          if (!matches) { trace.push({ phase, effectId: effect.id, owner: effect.owner, suppressed: true, reason: "scope_or_category" }); continue; }
+          active.push({ id: effect.id, factor: def.factor4096, order: def.order });
+        }
+        if (new Set(active.map(e => e.order)).size !== active.length) stop("unsupported", "AMBIGUOUS_EFFECT_ORDER");
+        return active.sort((a, b) => a.order - b.order);
+      };
+      // Resolve ALL active phases before immunity can yield a numeric outcome.
+      const groups = { P1: modifiersFor("P1"), A1: modifiersFor("A1"), D1: modifiersFor("D1"), F4: modifiersFor("F4") };
+      const modifyGroup = (value: number, phase: keyof typeof groups, builtins: number[] = []) => {
+        const group = groups[phase];
+        const modifier = combine4096([...builtins, ...group.map(e => e.factor)]);
+        for (const effect of group) trace.push({ phase, effectId: effect.id, modifier4096: effect.factor, rounding: "halfUp", reason: "combine_in_declared_order" });
+        const after = Math.max(1, applyRatio(value, modifier, 4096, "halfDown"));
+        trace.push({ phase: phase === "P1" ? "P2" : phase, before: value, after, modifier4096: modifier, rounding: "halfDown" });
+        return after;
+      };
+      let rolls: number[];
+      if (move.model === "fixed") {
+        if (Object.values(groups).some(group => group.length)) stop("unsupported", "FIXED_EFFECT_INTERACTION");
+        rolls = [immune ? 0 : move.damage];
+        trace.push({ phase: "Fixed", after: rolls[0], reason: "explicit_fixture_fixed_model" });
+      } else {
+        let power = move.power;
+        if (move.model === "hpScaled") {
+          if (request.attacker.currentHp === null) stop("missingContext", "CURRENT_HP_REQUIRED", ["attacker.currentHp"]);
+          power = Math.max(1, applyRatio(power, request.attacker.currentHp!, attackerStats.hp, "floor"));
+          trace.push({ phase: "M0", before: move.power, after: power, rounding: "floor" });
+        }
+        power = modifyGroup(power, "P1", context.helpingHand ? [rules.modifiers.helpingHand] : []);
+        const attackStat = move.category === "physical" ? "attack" : "spAttack";
+        const defenseStat = move.category === "physical" ? "defense" : "spDefense";
+        const attackStage = context.critical ? Math.max(0, request.attacker.stages[attackStat]) : request.attacker.stages[attackStat];
+        const defenseStage = context.critical ? Math.min(0, request.defender.stages[defenseStat]) : request.defender.stages[defenseStat];
+        const attack = modifyGroup(applyStage(attackerStats[attackStat], attackStage), "A1");
+        const defense = modifyGroup(applyStage(defenderStats[defenseStat], defenseStage), "D1");
+        let base = baseDamage(power, attack, defense);
+        trace.push({ phase: "B1", after: base, rounding: "floor" });
+        const apply = (value: number, modifier: number, phase: string, roll?: number) => {
+          const after = applyRatio(value, modifier, 4096, "halfDown");
+          trace.push({ phase, before: value, after, modifier4096: modifier, rounding: "halfDown", ...(roll === undefined ? {} : { roll }) });
+          return after;
+        };
+        if (move.target === "spread" && context.targetsActuallyHit > 1) base = apply(base, rules.modifiers.spread, "F1.spread");
+        if ((context.weather === "sun" && move.type === "fire") || (context.weather === "rain" && move.type === "water")) base = apply(base, rules.modifiers.weatherBoost, "F1.weather");
+        if ((context.weather === "rain" && move.type === "fire") || (context.weather === "sun" && move.type === "water")) base = apply(base, rules.modifiers.weatherWeaken, "F1.weather");
+        if (context.critical) base = apply(base, rules.modifiers.critical, "F1.critical");
+        const screen = context.auroraVeilOnDefenderSide || (move.category === "physical" ? context.reflectOnDefenderSide : context.lightScreenOnDefenderSide);
+        if (screen && context.critical) trace.push({ phase: "F4.screen", suppressed: true, reason: "critical" });
+        const screenModifiers = screen && !context.critical ? [request.format === "singles" ? rules.modifiers.screenSingles : rules.modifiers.screenDoubles] : [];
+        const finalModifier = combine4096([...screenModifiers, ...groups.F4.map(e => e.factor)]);
+        for (const effect of groups.F4) trace.push({ phase: "F4", effectId: effect.id, modifier4096: effect.factor, rounding: "halfUp" });
+        rolls = Array.from({ length: 16 }, (_, i) => {
+          let damage = applyRatio(base, 85 + i, 100, "floor");
+          trace.push({ phase: "F2.random", before: base, after: damage, rounding: "floor", roll: 85 + i });
+          if (attackerForm.types.includes(move.type)) damage = apply(damage, rules.modifiers.stab, "F3.stab", 85 + i);
+          const typed = applyRatio(damage, typeN, typeD, "floor");
+          trace.push({ phase: "F3.type", before: damage, after: typed, rounding: "floor", roll: 85 + i });
+          damage = typed;
+          if (move.category === "physical" && request.attacker.status === "burn") damage = apply(damage, rules.modifiers.burn, "F3.burn", 85 + i);
+          damage = apply(damage, finalModifier, "F4", 85 + i);
+          const finalDamage = immune ? 0 : Math.max(1, damage);
+          trace.push({ phase: "F5", before: damage, after: finalDamage, roll: 85 + i, reason: immune ? "immune" : "minimum_one" });
+          return finalDamage;
+        });
+      }
+      const min = Math.min(...rolls); const max = Math.max(...rolls);
+      const currentHp = request.defender.currentHp ?? defenderStats.hp;
+      const ko = analyzeKo(rolls, currentHp);
+      if (ko.kind === "limitExceeded") stop("unsupported", "KO_RESOURCE_LIMIT");
+      const distribution = new Map<number, number>();
+      for (const roll of rolls) distribution.set(roll, (distribution.get(roll) ?? 0) + 1);
+      return { ...evidence(), status: "ok", rolls, distribution: [...distribution].map(([damage, count]) => ({ damage, count })), range: { min, max },
+        damagePercent: { min: fraction(BigInt(min) * 100n, BigInt(defenderStats.hp)), max: fraction(BigInt(max) * 100n, BigInt(defenderStats.hp)) },
+        remainingHp: { min: Math.max(0, currentHp - max), max: Math.max(0, currentHp - min) }, maximumHp: defenderStats.hp, currentHp, ko, trace };
+    } catch (error) {
+      if (error instanceof Stop) return failure(error.status, error.code, error.paths);
+      if (error instanceof RangeError || error instanceof z.ZodError) return failure("invalid", "ARITHMETIC_OR_DATA_INVALID");
+      throw error;
+    }
+  };
+
+  const calculateNormal = (input: unknown) => {
+    const parsed = normalSavedInputSchema.safeParse(input);
+    if (!parsed.success) return failure("invalid", "INVALID_NORMAL_INPUT");
+    const { moves, ...common } = parsed.data;
+    return { status: "ok" as const, results: moves.map(moveId => calculateDamage({ ...common, moveId })) };
+  };
+  const calculateTop50 = (input: unknown, rankingInput: unknown) => {
+    const parsed = top50SavedInputSchema.safeParse(input); const reference = rankingSchema.safeParse(rankingInput);
+    if (!parsed.success || !reference.success) return failure("invalid", "INVALID_TOP50_INPUT");
+    const data = parsed.data; const ranking = reference.data;
+    if (data.rankingSnapshotId !== ranking.snapshotId || data.format !== ranking.format || data.sourceVersions.regulationId !== ranking.regulationId) return failure("invalid", "SNAPSHOT_MISMATCH");
+    const entries = new Map(ranking.entries.map(e => [e.rankingEntryId, e]));
+    for (const [id, build] of Object.entries(data.defenderOverrides)) {
+      if (entries.get(id)?.pokemonFormId !== build.pokemonFormId) return failure("invalid", "OVERRIDE_ENTRY_MISMATCH");
+    }
+    const cells = ranking.entries.flatMap(entry => data.moves.map((moveId, moveIndex) => {
+      const defender = data.defenderOverrides[entry.rankingEntryId] ?? entry.representativeBuild;
+      const result = defender
+        ? calculateDamage({ format: data.format, attacker: data.attacker, defender, moveId, conditions: data.conditions, sourceVersions: data.sourceVersions })
+        : failure("missingContext", "DEFENDER_BUILD_MISSING", [`defenderOverrides.${entry.rankingEntryId}`]);
+      return { rankingEntryId: entry.rankingEntryId, moveId, moveIndex, result };
+    }));
+    return { status: "ok" as const, cells };
+  };
+  return { calculateDamage, calculateNormal, calculateTop50 };
+}

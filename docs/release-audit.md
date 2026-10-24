@@ -7,6 +7,7 @@
 | P0-04 | 収録フォーム・技・特性・性格/Stat Alignment・マスター合法性 | 実データ構造を部分監査・意味整合/実機未検証 | APIと候補マスターにフォーム/特性不足と収録フラグ矛盾。docs/validation/phase-0-1-external-data.json。承認なしに本番データへ昇格しない |
 | P0-05 | 同レギュレーションのゲーム内TOP50×2のフォームと順位全件一致 | 未実施・公開阻止 | 原本references/in-game-rank-audit-template.csv（100行）に画面・日時・シーズン証跡を記録 |
 | P0-06 | 採用演算と複合条件・丸め境界の実機整数ダメージ一致 | 未実施・公開阻止 | 原本references/verification-cases.csv（47件）を起点にL3証跡を採録 |
+| ENG-L1 | Phase 2の整数演算・KO・共通200セル | fixtureで66件成功・部分実装 | docs/phase-2-report.md。実ルール/実効果は未承認でproduction数値停止。L2差分とL3は未実施 |
 | RIGHTS | 採用データの最新規約・帰属・加工表示・画像/IP許諾 | 未審査・公開阻止 | Phase 4/8。現状で外部ゲームデータや画像の配信なし |
 | API-03 | 保存DTOの実行時・版・ID・性格・snapshot整合 | Phase 1実装 | tests/contracts.test.ts。DBとAPI実装の認可試験は後続 |
 | SCOPE-01 | 共有URL/API/DBなし | Phase 0/1で検査 | tests/openapi.test.ts / e2e/foundation.spec.ts |
