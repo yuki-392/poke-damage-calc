@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { championsMoveDefinitions } from "./champions-moves";
 import { normalSavedInputSchema, rankingSchema, top50SavedInputSchema } from "../contracts/schemas";
 import { createContractValidator } from "../contracts/validation";
 import { damageRequestSchema, engineCatalogSchema, type DamageResult, type EffectDefinition, type Failure, type FailureStatus, type TraceEntry } from "./contracts";
@@ -41,21 +42,21 @@ export function createDamageEngine(catalogInput: unknown) {
       const trace: TraceEntry[] = [];
       const attackerForm = forms.get(request.attacker.pokemonFormId)!;
       const defenderForm = forms.get(request.defender.pokemonFormId)!;
+      const move = catalog.moves[request.moveId];
+      if (!move) stop("unsupported", "MOVE_MODEL_UNCLASSIFIED", ["moveId"]);
+      if (move.model === "unsupported") stop("unsupported", move.reason, ["moveId"]);
       const actorStats = (owner: "attacker" | "defender") => {
         const build = request[owner]; const form = forms.get(build.pokemonFormId)!;
         const model = catalog.formRules[form.id]?.statModel;
         if (!model || model === "unsupported") stop("unsupported", "FORM_RULE_UNSUPPORTED", [`${owner}.pokemonFormId`]);
-        if (!form.baseStats) stop("unsupported", "BASE_STATS_UNAVAILABLE", [`${owner}.pokemonFormId`]);
+        if (!form.baseStats) stop(owner === "attacker" && move.model === "hpScaled" ? "missingContext" : "unsupported", owner === "attacker" && move.model === "hpScaled" ? "MAX_HP_UNAVAILABLE" : "BASE_STATS_UNAVAILABLE", [`${owner}.pokemonFormId`]);
         const stats = resolveStats(form.baseStats!, build, model);
         if (build.currentHp !== null && build.currentHp > stats.hp) stop("invalid", "CURRENT_HP_EXCEEDS_MAX", [`${owner}.currentHp`]);
         return stats;
       };
       const attackerStats = actorStats("attacker"); const defenderStats = actorStats("defender");
-      const move = catalog.moves[request.moveId];
-      if (!move) stop("unsupported", "MOVE_MODEL_UNCLASSIFIED", ["moveId"]);
-      if (move.model === "unsupported") stop("unsupported", move.reason, ["moveId"]);
       const selected: { id: string; owner: string; definition: EffectDefinition }[] = [];
-      const collect = (ids: string[], owner: string) => {
+      const collect = (ids: string[], owner: string, entity: "move" | "ability" | "item") => {
         if (!ids.length) stop("unsupported", "EFFECT_UNCLASSIFIED", [owner]);
         if (new Set(ids).size !== ids.length) stop("unsupported", "DUPLICATE_EFFECT_ID", [owner]);
         for (const id of ids) {
@@ -64,21 +65,55 @@ export function createDamageEngine(catalogInput: unknown) {
           if (effect.support === "unsupported") stop("unsupported", "EFFECT_UNSUPPORTED", [owner]);
           if (definition.kind === "unsupported") stop("unsupported", definition.reason, [owner]);
           if (effect.support === "audited_neutral" && definition.kind !== "neutral") stop("unsupported", "EFFECT_CLASSIFICATION_CONFLICT", [owner]);
+          if (definition.kind === "champions") {
+            if (entity !== (definition.name === "lifeOrb" ? "item" : "ability")) stop("unsupported", "EFFECT_ENTITY_MISMATCH", [owner]);
+            if (definition.evidence.availability !== "reference_listed") stop("unsupported", "NAMED_EFFECT_AVAILABILITY_UNCONFIRMED", [owner]);
+            if (selected.some(e => e.owner === owner && e.definition.kind === "champions" && e.definition.name === definition.name)) stop("unsupported", "DUPLICATE_NAMED_EFFECT", [owner]);
+          }
+          if (definition.kind === "championsMove") {
+            if (entity !== "move") stop("unsupported", "EFFECT_ENTITY_MISMATCH", [owner]);
+            if (definition.evidence.availability !== "reference_listed") stop("unsupported", "NAMED_MOVE_AVAILABILITY_UNCONFIRMED", ["moveId"]);
+            const expected = championsMoveDefinitions[definition.name].model;
+            if (Object.entries(expected).some(([key, value]) => (move as Record<string, unknown>)[key] !== value)) stop("unsupported", "MOVE_MODEL_MISMATCH", ["moveId"]);
+            if (selected.some(e => e.definition.kind === "championsMove")) stop("unsupported", "DUPLICATE_MOVE_MODEL", ["moveId"]);
+          }
           selected.push({ id, owner, definition });
         }
       };
-      collect(moves.get(request.moveId)!.effectIds, "move");
+      collect(moves.get(request.moveId)!.effectIds, "move", "move");
       for (const owner of ["attacker", "defender"] as const) {
         const build = request[owner];
-        if (build.abilityId !== null) collect(abilities.get(build.abilityId)!.effectIds, owner);
+        if (build.abilityId !== null) collect(abilities.get(build.abilityId)!.effectIds, owner, "ability");
         if (build.item.kind === "customText") stop("unsupported", "UNRESOLVED_ITEM", [`${owner}.item`]);
-        if (build.item.kind === "known") collect(items.get(build.item.itemId)!.effectIds, owner);
+        if (build.item.kind === "known") collect(items.get(build.item.itemId)!.effectIds, owner, "item");
       }
       const context = request.conditions;
-      if (context.terrain !== "none" || context.weather === "sand" || context.weather === "snow" || context.supplementary.length) stop("unsupported", "CONTEXT_RULE_UNSUPPORTED", ["conditions"]);
+      const named = selected.filter(e => e.definition.kind === "champions");
+      const registeredMove = selected.find(e => e.definition.kind === "championsMove");
+      const moveName = registeredMove?.definition.kind === "championsMove" ? registeredMove.definition.name : undefined;
+      const activity = new Map<string, string>();
+      for (const condition of context.supplementary) {
+        if (condition.kind !== "moveEffect" || !named.some(e => e.id === condition.effectId && e.owner === "attacker") || !["active", "suppressed"].includes(condition.optionId)) stop("unsupported", "CONTEXT_RULE_UNSUPPORTED", ["conditions.supplementary"]);
+        activity.set(condition.effectId, condition.optionId);
+      }
+      const requestEvidence = () => ({ ...evidence(),
+        sourceIds: [...new Set([...rules.sourceIds, ...(catalog.typeChartEvidence?.sources.map(s => s.id) ?? []), ...selected.flatMap(e => e.definition.kind === "champions" || e.definition.kind === "championsMove" ? e.definition.evidence.sources.map(s => s.id) : [])])],
+        assumptions: [...evidence().assumptions, ...(moveName ? ["secondary_effects_not_simulated"] : []), ...(moveName === "protect" ? ["protect_defense_not_simulated"] : []), ...(named.length ? ["named_effect_activity_explicitly_resolved"] : []), ...(named.some(e => e.definition.kind === "champions" && e.definition.name === "lifeOrb") ? ["life_orb_recoil_not_in_damage_or_ko_model"] : [])],
+      });
+      if (catalog.typeChartEvidence && catalog.typeChartEvidence.availability !== "reference_listed") stop("unsupported", "TYPE_CHART_UNCONFIRMED");
+      if (context.terrain !== "none" || context.weather === "sand" || context.weather === "snow") stop("unsupported", "CONTEXT_RULE_UNSUPPORTED", ["conditions"]);
       selected.filter(e => e.definition.kind === "neutral").forEach(e => trace.push({ phase: "Resolve", effectId: e.id, owner: e.owner, reason: "explicit_fixture_neutral" }));
-      if (move.model === "nonDamaging") return { ...evidence(), status: "nonDamaging", code: "NON_DAMAGING", trace };
+      if (registeredMove?.definition.kind === "championsMove") trace.push({ phase: "Resolve", effectId: registeredMove.id, owner: "move", reason: "registered_move_model", sourceIds: registeredMove.definition.evidence.sources.map(s => s.id) });
+      if (move.model === "nonDamaging") return { ...requestEvidence(), status: "nonDamaging", code: "NON_DAMAGING", trace };
+      if ((moveName === "rockSlide" || moveName === "waterSpout") && context.targetsActuallyHit > 2) stop("invalid", "MOVE_TARGET_COUNT", ["conditions.targetsActuallyHit"]);
       if (move.model !== "fixed" && move.target === "single" && context.targetsActuallyHit !== 1) stop("invalid", "SINGLE_TARGET_COUNT", ["conditions.targetsActuallyHit"]);
+      if (move.type === "ground" && defenderForm.types.includes("flying") && context.defenderGrounded === true) stop("unsupported", "GROUNDED_TYPE_INTERACTION_UNSUPPORTED", ["conditions.defenderGrounded"]);
+      let resolvedPower = move.model === "fixed" ? 0 : move.power;
+      if (move.model === "hpScaled") {
+        if (request.attacker.currentHp === null) stop("missingContext", "CURRENT_HP_REQUIRED", ["attacker.currentHp"]);
+        resolvedPower = Math.max(1, applyRatio(move.power, request.attacker.currentHp, attackerStats.hp, "floor"));
+        trace.push({ phase: "M0", before: move.power, after: resolvedPower, rounding: "floor" });
+      }
       const chart = catalog.typeChart[move.type];
       let typeN = 1; let typeD = 1;
       for (const type of defenderForm.types) {
@@ -90,8 +125,28 @@ export function createDamageEngine(catalogInput: unknown) {
       const immunity = selected.find(e => e.definition.kind === "immunity" && e.owner === "defender" && e.definition.type === move.type);
       const immune = typeN === 0 || !!immunity;
       if (immune) trace.push({ phase: "Immunity", effectId: immunity?.id, owner: "defender", after: 0, reason: immunity ? "effect_immunity" : "type_immunity" });
+      // Resolve intrinsic named rules before collecting phase modifiers. Active state must
+      // already account for suppression by the caller; unknown mechanisms are rejected above.
+      const namedModifiers: { id: string; phase: "P1" | "A1" | "F4"; factor: number; order: number }[] = [];
+      for (const effect of named) {
+        const def = effect.definition;
+        if (def.kind !== "champions") continue;
+        const phase = def.name === "technician" ? "P1" : def.name === "hugePower" ? "A1" : "F4";
+        const sourceIds = def.evidence.sources.map(s => s.id);
+        if (effect.owner !== "attacker") { trace.push({ phase, effectId: effect.id, owner: effect.owner, suppressed: true, reason: "outgoing_only", sourceIds }); continue; }
+        const state = activity.get(effect.id);
+        if (!state) stop("missingContext", "EFFECT_ACTIVITY_REQUIRED", [`conditions.supplementary.${effect.id}`]);
+        if (state === "suppressed") { trace.push({ phase, effectId: effect.id, owner: effect.owner, suppressed: true, reason: "explicit_effect_suppression", sourceIds }); continue; }
+        if (move.model !== "standard" && !(move.model === "hpScaled" && moveName === "waterSpout")) stop("unsupported", "NAMED_EFFECT_MODEL_UNSUPPORTED", ["moveId"]);
+        if ((def.name === "technician" && resolvedPower > 60) || (def.name === "hugePower" && move.category !== "physical")) {
+          trace.push({ phase, effectId: effect.id, owner: effect.owner, suppressed: true, reason: "activation_condition_not_met", sourceIds }); continue;
+        }
+        const factor = def.name === "technician" ? 6144 : def.name === "hugePower" ? 8192 : 5324;
+        trace.push({ phase, effectId: effect.id, owner: effect.owner, modifier4096: factor, reason: "named_effect_active", sourceIds });
+        namedModifiers.push({ id: effect.id, phase, factor, order: def.name === "technician" ? 100 : def.name === "hugePower" ? 200 : 300 });
+      }
       const modifiersFor = (phase: "P1" | "A1" | "D1" | "F4") => {
-        const active: { id: string; factor: number; order: number }[] = [];
+        const active: { id: string; factor: number; order: number }[] = namedModifiers.filter(e => e.phase === phase);
         for (const effect of selected) {
           const def = effect.definition;
           if (def.kind !== "multiplier" || def.phase !== phase) continue;
@@ -118,13 +173,7 @@ export function createDamageEngine(catalogInput: unknown) {
         rolls = [immune ? 0 : move.damage];
         trace.push({ phase: "Fixed", after: rolls[0], reason: "explicit_fixture_fixed_model" });
       } else {
-        let power = move.power;
-        if (move.model === "hpScaled") {
-          if (request.attacker.currentHp === null) stop("missingContext", "CURRENT_HP_REQUIRED", ["attacker.currentHp"]);
-          power = Math.max(1, applyRatio(power, request.attacker.currentHp!, attackerStats.hp, "floor"));
-          trace.push({ phase: "M0", before: move.power, after: power, rounding: "floor" });
-        }
-        power = modifyGroup(power, "P1", context.helpingHand ? [rules.modifiers.helpingHand] : []);
+        const power = modifyGroup(resolvedPower, "P1", context.helpingHand ? [rules.modifiers.helpingHand] : []);
         const attackStat = move.category === "physical" ? "attack" : "spAttack";
         const defenseStat = move.category === "physical" ? "defense" : "spDefense";
         const attackStage = context.critical ? Math.max(0, request.attacker.stages[attackStat]) : request.attacker.stages[attackStat];
@@ -167,7 +216,7 @@ export function createDamageEngine(catalogInput: unknown) {
       if (ko.kind === "limitExceeded") stop("unsupported", "KO_RESOURCE_LIMIT");
       const distribution = new Map<number, number>();
       for (const roll of rolls) distribution.set(roll, (distribution.get(roll) ?? 0) + 1);
-      return { ...evidence(), status: "ok", rolls, distribution: [...distribution].map(([damage, count]) => ({ damage, count })), range: { min, max },
+      return { ...requestEvidence(), status: "ok", rolls, distribution: [...distribution].map(([damage, count]) => ({ damage, count })), range: { min, max },
         damagePercent: { min: fraction(BigInt(min) * 100n, BigInt(defenderStats.hp)), max: fraction(BigInt(max) * 100n, BigInt(defenderStats.hp)) },
         remainingHp: { min: Math.max(0, currentHp - max), max: Math.max(0, currentHp - min) }, maximumHp: defenderStats.hp, currentHp, ko, trace };
     } catch (error) {

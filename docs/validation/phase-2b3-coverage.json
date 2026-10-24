@@ -1,0 +1,1960 @@
+{
+  "auditedAt": "2026-10-24T02:48:04.212Z",
+  "scope": "Phase 2-B stage 3, aggregate coverage only",
+  "sources": [
+    {
+      "key": "api-index",
+      "url": "https://championsbattledata.com/api/index",
+      "fetchedAt": "2026-10-24T02:24:52.416717+00:00",
+      "sha256": "e1c8dcf0056a453be0804cb2cc8ad229652f34cc27977f6eedcb3b50bf7495a6"
+    },
+    {
+      "key": "meta-singles",
+      "url": "https://championsbattledata.com/data/builder/meta-singles.json",
+      "fetchedAt": "2026-10-24T02:24:52.816647+00:00",
+      "sha256": "bfe4595c99bd1a843e3ba1758c376c5a623831f56cdd776c3500de344a79b80d"
+    },
+    {
+      "key": "meta-doubles",
+      "url": "https://championsbattledata.com/data/builder/meta-doubles.json",
+      "fetchedAt": "2026-10-24T02:24:53.572129+00:00",
+      "sha256": "384b8da6718c2cdc6d305c6e80f9c13fa6ea1e74819fee52767f3a5410b90ce6"
+    },
+    {
+      "key": "master-roster",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/cb874a3040174314f67642f382143cc8a401122a/pokemon/roster.json",
+      "fetchedAt": "2026-10-24T02:25:29.037515+00:00",
+      "sha256": "64829ba2e67bef366e1c5e2e31fab0aa1accb7ffd7472be47fde18fc1158f346"
+    },
+    {
+      "key": "master-stats",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/cb874a3040174314f67642f382143cc8a401122a/pokemon/base-stats.json",
+      "fetchedAt": "2026-10-24T02:25:29.486054+00:00",
+      "sha256": "250497d41dbee57480d4d17b15c638d49d5b291002572c57e10f25e403ae23a0"
+    },
+    {
+      "key": "master-natures",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/cb874a3040174314f67642f382143cc8a401122a/natures/natures.json",
+      "fetchedAt": "2026-10-24T02:25:29.861531+00:00",
+      "sha256": "55de014cc5739e134bb12a63c8ef39779d5665e1a39cd7b1d7ffe29101da21b3"
+    },
+    {
+      "key": "master-moves",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/cb874a3040174314f67642f382143cc8a401122a/moves/moves.json",
+      "fetchedAt": "2026-10-24T02:25:32.811684+00:00",
+      "sha256": "bd1cf9462aca5cd2ac1705c5ce210bb3aec2135d6d7148681f28bd2838a80f9b"
+    },
+    {
+      "key": "master-abilities",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/cb874a3040174314f67642f382143cc8a401122a/abilities/abilities.json",
+      "fetchedAt": "2026-10-24T02:25:33.775646+00:00",
+      "sha256": "9636176df42763714ef316268616d639ec231bf9331004569b51e024aaf71b1c"
+    },
+    {
+      "key": "master-items",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/cb874a3040174314f67642f382143cc8a401122a/items/items.json",
+      "fetchedAt": "2026-10-24T02:25:34.222028+00:00",
+      "sha256": "3b78d284a7b116a8d306b8a07df63659e220e297a3eb2bbb303bfee34a506149"
+    },
+    {
+      "key": "master-license",
+      "url": "https://raw.githubusercontent.com/otterlyclueless/pokemon-champions-data/cb874a3040174314f67642f382143cc8a401122a/LICENSE",
+      "fetchedAt": "2026-10-24T02:25:34.555876+00:00",
+      "sha256": "e4e8cd45e0acc57989fd62e952302279e1e241e3795c193287b7cd1cb1edc94a"
+    },
+    {
+      "key": "builder-generator",
+      "url": "https://raw.githubusercontent.com/Gheist23/pokemonbattledata/main/tools/builder-meta.mjs",
+      "fetchedAt": "2026-10-24T02:27:16.391187+00:00",
+      "sha256": "fc4a6fae32edbb387c59229bff6570fc1431b7230868685b627c6dfd67de168c"
+    }
+  ],
+  "upstream": {
+    "generatedAt": "2026-10-23T16:54:01.962Z",
+    "dataVersion": "20261023165401962",
+    "seasonLabel": "Current",
+    "regulationId": null
+  },
+  "pinnedMasterRevision": "cb874a3040174314f67642f382143cc8a401122a",
+  "implementationEvidence": [
+    {
+      "path": "src/lib/engine/engine.ts",
+      "sha256": "6194f408a54e7d583d56ab57c7c8aa534a3e1835fd23bb803b2652db6ebbfc06"
+    },
+    {
+      "path": "src/lib/engine/contracts.ts",
+      "sha256": "20a51a8258b9a7f925e6b4cd1a56c3ca6cd63e53f8528374a5e580e969b25e0b"
+    },
+    {
+      "path": "src/lib/engine/champions-rules.ts",
+      "sha256": "38e3ff016472cc7b908e2d0ae80cc01a35363d9ed484c79eff841b2a06e3df84"
+    },
+    {
+      "path": "src/lib/engine/champions-moves.ts",
+      "sha256": "bcfaafcd665fff376c0d9ae3e3cbb0e5707f1284b8528a5edb5474dd7e31bb29"
+    }
+  ],
+  "retention": {
+    "rawResponsesCommitted": false,
+    "rawCacheDeletedAt": "2026-10-24T02:48:54.899241+00:00",
+    "verifiedPayloadHashes": 11,
+    "rawCacheDirectoryRemoved": true
+  },
+  "attribution": [
+    {
+      "label": "Battle data provided by Pokémon Champions Battle Data",
+      "url": "https://championsbattledata.com/",
+      "terms": "https://championsbattledata.com/api-rules/",
+      "storage": "Only aggregate diagnostics retained. This run's raw temporary files must be removed after verification."
+    },
+    {
+      "label": "Pokemon Champions Data Contributors",
+      "url": "https://github.com/otterlyclueless/pokemon-champions-data",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "changes": "Name/alias lookups and aggregate missing-field counts. No source fields or approval flags changed."
+    }
+  ],
+  "productionProbe": {
+    "status": "unsupported",
+    "code": "RULES_NOT_APPROVED",
+    "input": "synthetic only"
+  },
+  "formats": [
+    {
+      "format": "Singles",
+      "generatedAt": "2026-10-23T16:54:01.962Z",
+      "rows": 50,
+      "rankingProvenance": "unverified_rank",
+      "regulationId": null,
+      "data": {
+        "formId": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "masterForm": {
+          "numerator": 36,
+          "denominator": 50,
+          "percent": 72
+        },
+        "baseStats": {
+          "numerator": 36,
+          "denominator": 50,
+          "percent": 72
+        },
+        "types": {
+          "numerator": 36,
+          "denominator": 50,
+          "percent": 72
+        },
+        "points": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "abilityName": {
+          "numerator": 44,
+          "denominator": 50,
+          "percent": 88
+        },
+        "abilityFormLink": {
+          "numerator": 36,
+          "denominator": 50,
+          "percent": 72
+        },
+        "itemName": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "nature": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "allRepresentativeFields": {
+          "numerator": 36,
+          "denominator": 50,
+          "percent": 72
+        },
+        "abilityLegalityAmongKnownForms": {
+          "numerator": 36,
+          "denominator": 36,
+          "percent": 100
+        },
+        "physicalStatAlignmentVerified": false,
+        "rawPointCompleteness": null,
+        "rawNatureCompleteness": null
+      },
+      "rules": {
+        "defenderAbility": {
+          "numerator": 1,
+          "denominator": 50,
+          "percent": 2
+        },
+        "defenderItem": {
+          "numerator": 1,
+          "denominator": 50,
+          "percent": 2
+        },
+        "defenderAbilityAndItem": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "formBindings": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "integratedRealCatalogRows": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "marginalAbilities": {
+          "distinctNames": {
+            "numerator": 1,
+            "denominator": 76,
+            "percent": 1.3158
+          },
+          "marginalMentions": {
+            "numerator": 1,
+            "denominator": 105,
+            "percent": 0.9524
+          },
+          "catalogNames": {
+            "numerator": 70,
+            "denominator": 76,
+            "percent": 92.1053
+          },
+          "catalogMentions": {
+            "numerator": 99,
+            "denominator": 105,
+            "percent": 94.2857
+          },
+          "missingCatalogNames": [
+            "Emergency Exit",
+            "Good as Gold",
+            "Grassy Surge",
+            "Libero",
+            "Psychic Surge",
+            "Thermal Exchange"
+          ]
+        },
+        "marginalItems": {
+          "distinctNames": {
+            "numerator": 1,
+            "denominator": 85,
+            "percent": 1.1765
+          },
+          "marginalMentions": {
+            "numerator": 43,
+            "denominator": 500,
+            "percent": 8.6
+          },
+          "catalogNames": {
+            "numerator": 85,
+            "denominator": 85,
+            "percent": 100
+          },
+          "catalogMentions": {
+            "numerator": 500,
+            "denominator": 500,
+            "percent": 100
+          },
+          "missingCatalogNames": []
+        },
+        "scope": "Named candidate models only; the three existing effects are outgoing-only for defenders under the five supported direct/status move models. No other effect is inferred neutral."
+      },
+      "production": {
+        "eligibleRows": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "basis": "global RULES_NOT_APPROVED and absent approved real catalog; policy eligibility, not observed success",
+        "measuredCalculationSuccess": null
+      },
+      "gameEvidence": {
+        "rankRows": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "damageRows": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "measuredGameAccuracy": null
+      },
+      "attack": {
+        "templateSlots": {
+          "numerator": 15,
+          "denominator": 200,
+          "percent": 7.5
+        },
+        "templateDamageSlots": {
+          "numerator": 14,
+          "denominator": 200,
+          "percent": 7
+        },
+        "templateMissingMoves": 0,
+        "templateExcludedSlots": 6,
+        "marginalModelMentions": {
+          "numerator": 28,
+          "denominator": 500,
+          "percent": 5.6
+        },
+        "marginalDamageMentions": {
+          "numerator": 21,
+          "denominator": 500,
+          "percent": 4.2
+        },
+        "marginalModelMass": {
+          "numerator": 1209.3,
+          "denominator": 18826.6,
+          "percent": 6.4234
+        },
+        "marginalDamageMass": {
+          "numerator": 1010.6,
+          "denominator": 18826.6,
+          "percent": 5.3679
+        },
+        "damagingOnlyMass": {
+          "numerator": 1010.6,
+          "denominator": 13450.7,
+          "percent": 7.5134
+        },
+        "unknownCategoryMentions": 0,
+        "marginalMissingMoveMentions": 0,
+        "marginalExcludedMoveMentions": 7,
+        "marginalRowEntryRange": {
+          "min": 10,
+          "max": 10
+        },
+        "distinctReportedMoveNames": 204,
+        "jointMoveAbilityItemUsage": null,
+        "marginalMeaning": "Sum of reported per-form marginal percentage points, with equal weight per TOP50 form and truncated reported lists; not population usage or a joint distribution. Protect is model-only, never damage coverage."
+      },
+      "blockers": {
+        "unresolvedSourceForm": 0,
+        "missingMasterForm": 14,
+        "missingBaseStats": 14,
+        "invalidTypes": 14,
+        "missingOrInvalidPoints": 0,
+        "missingAbilityCatalog": 6,
+        "illegalAbilityOnKnownForm": 0,
+        "missingItemCatalog": 0,
+        "missingOrInvalidNature": 0,
+        "incompleteTemplate": 0,
+        "unsupportedDefenderAbility": 49,
+        "unsupportedDefenderItem": 49
+      },
+      "missing": {
+        "forms": [
+          "Baxcalibur",
+          "Blaziken",
+          "Cinderace",
+          "Gholdengo",
+          "Golisopod",
+          "Indeedee",
+          "Metagross",
+          "Pawmot",
+          "Rillaboom",
+          "Rotom-Heat",
+          "Rotom-Wash",
+          "Salamence",
+          "Staraptor",
+          "Swampert"
+        ],
+        "abilities": [
+          "Emergency Exit",
+          "Good as Gold",
+          "Grassy Surge",
+          "Libero",
+          "Psychic Surge",
+          "Thermal Exchange"
+        ],
+        "items": [],
+        "natures": [],
+        "templateExcludedMoves": [
+          "Double Shock",
+          "Drum Beating",
+          "Glaive Rush",
+          "Make It Rain",
+          "Pyro Ball",
+          "Revival Blessing"
+        ],
+        "marginalExcludedMoves": [
+          "Court Change",
+          "Double Shock",
+          "Drum Beating",
+          "Glaive Rush",
+          "Make It Rain",
+          "Pyro Ball",
+          "Revival Blessing"
+        ]
+      },
+      "frequencies": {
+        "abilities": {
+          "byTemplate": [
+            {
+              "name": "Intimidate",
+              "templateRows": 3,
+              "marginalRows": 3,
+              "marginalPercentSum": 288.9
+            },
+            {
+              "name": "Levitate",
+              "templateRows": 3,
+              "marginalRows": 3,
+              "marginalPercentSum": 300
+            },
+            {
+              "name": "Torrent",
+              "templateRows": 3,
+              "marginalRows": 6,
+              "marginalPercentSum": 273.3
+            },
+            {
+              "name": "Blaze",
+              "templateRows": 2,
+              "marginalRows": 5,
+              "marginalPercentSum": 182.5
+            },
+            {
+              "name": "Inner Focus",
+              "templateRows": 2,
+              "marginalRows": 4,
+              "marginalPercentSum": 157.5
+            },
+            {
+              "name": "Protean",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 168.4
+            },
+            {
+              "name": "Sand Stream",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 199.2
+            },
+            {
+              "name": "Unaware",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 183.7
+            },
+            {
+              "name": "Adaptability",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 96.3
+            },
+            {
+              "name": "Clear Body",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 99.4
+            },
+            {
+              "name": "Competitive",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 91.2
+            },
+            {
+              "name": "Cursed Body",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 100
+            }
+          ],
+          "byMarginalMass": [
+            {
+              "name": "Levitate",
+              "templateRows": 3,
+              "marginalRows": 3,
+              "marginalPercentSum": 300
+            },
+            {
+              "name": "Intimidate",
+              "templateRows": 3,
+              "marginalRows": 3,
+              "marginalPercentSum": 288.9
+            },
+            {
+              "name": "Torrent",
+              "templateRows": 3,
+              "marginalRows": 6,
+              "marginalPercentSum": 273.3
+            },
+            {
+              "name": "Sand Stream",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 199.2
+            },
+            {
+              "name": "Unaware",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 183.7
+            },
+            {
+              "name": "Blaze",
+              "templateRows": 2,
+              "marginalRows": 5,
+              "marginalPercentSum": 182.5
+            },
+            {
+              "name": "Protean",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 168.4
+            },
+            {
+              "name": "Inner Focus",
+              "templateRows": 2,
+              "marginalRows": 4,
+              "marginalPercentSum": 157.5
+            },
+            {
+              "name": "Cursed Body",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 100
+            },
+            {
+              "name": "Disguise",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 100
+            },
+            {
+              "name": "Emergency Exit",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 100
+            },
+            {
+              "name": "Good as Gold",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 100
+            }
+          ]
+        },
+        "items": {
+          "byTemplate": [
+            {
+              "name": "Leftovers",
+              "templateRows": 6,
+              "marginalRows": 39,
+              "marginalPercentSum": 568.3
+            },
+            {
+              "name": "Focus Sash",
+              "templateRows": 5,
+              "marginalRows": 38,
+              "marginalPercentSum": 498
+            },
+            {
+              "name": "Sitrus Berry",
+              "templateRows": 5,
+              "marginalRows": 48,
+              "marginalPercentSum": 459.9
+            },
+            {
+              "name": "Choice Scarf",
+              "templateRows": 3,
+              "marginalRows": 30,
+              "marginalPercentSum": 391.9
+            },
+            {
+              "name": "Rocky Helmet",
+              "templateRows": 3,
+              "marginalRows": 31,
+              "marginalPercentSum": 287.6
+            },
+            {
+              "name": "Air Balloon",
+              "templateRows": 1,
+              "marginalRows": 22,
+              "marginalPercentSum": 135.8
+            },
+            {
+              "name": "Black Glasses",
+              "templateRows": 1,
+              "marginalRows": 5,
+              "marginalPercentSum": 75.5
+            },
+            {
+              "name": "Blastoisinite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 95.4
+            },
+            {
+              "name": "Blazikenite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 58.2
+            },
+            {
+              "name": "Charizardite Y",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 67
+            },
+            {
+              "name": "Clefablite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 81.3
+            },
+            {
+              "name": "Damp Rock",
+              "templateRows": 1,
+              "marginalRows": 2,
+              "marginalPercentSum": 75.9
+            }
+          ],
+          "byMarginalMass": [
+            {
+              "name": "Leftovers",
+              "templateRows": 6,
+              "marginalRows": 39,
+              "marginalPercentSum": 568.3
+            },
+            {
+              "name": "Focus Sash",
+              "templateRows": 5,
+              "marginalRows": 38,
+              "marginalPercentSum": 498
+            },
+            {
+              "name": "Sitrus Berry",
+              "templateRows": 5,
+              "marginalRows": 48,
+              "marginalPercentSum": 459.9
+            },
+            {
+              "name": "Choice Scarf",
+              "templateRows": 3,
+              "marginalRows": 30,
+              "marginalPercentSum": 391.9
+            },
+            {
+              "name": "Rocky Helmet",
+              "templateRows": 3,
+              "marginalRows": 31,
+              "marginalPercentSum": 287.6
+            },
+            {
+              "name": "Life Orb",
+              "templateRows": 1,
+              "marginalRows": 43,
+              "marginalPercentSum": 247.4
+            },
+            {
+              "name": "Air Balloon",
+              "templateRows": 1,
+              "marginalRows": 22,
+              "marginalPercentSum": 135.8
+            },
+            {
+              "name": "Golisopite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 98.3
+            },
+            {
+              "name": "Metagrossite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 97
+            },
+            {
+              "name": "Delphoxite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 96.7
+            },
+            {
+              "name": "Raichunite Y",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 96.5
+            },
+            {
+              "name": "Floettite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 95.9
+            }
+          ]
+        },
+        "moves": {
+          "byTemplate": [
+            {
+              "name": "Earthquake",
+              "templateRows": 8,
+              "marginalRows": 9,
+              "marginalPercentSum": 610.8
+            },
+            {
+              "name": "Flamethrower",
+              "templateRows": 6,
+              "marginalRows": 8,
+              "marginalPercentSum": 363.9
+            },
+            {
+              "name": "Roost",
+              "templateRows": 6,
+              "marginalRows": 8,
+              "marginalPercentSum": 406.8
+            },
+            {
+              "name": "Stealth Rock",
+              "templateRows": 6,
+              "marginalRows": 9,
+              "marginalPercentSum": 390.5
+            },
+            {
+              "name": "U-turn",
+              "templateRows": 6,
+              "marginalRows": 11,
+              "marginalPercentSum": 496.8
+            },
+            {
+              "name": "Swords Dance",
+              "templateRows": 5,
+              "marginalRows": 11,
+              "marginalPercentSum": 465.4
+            },
+            {
+              "name": "Yawn",
+              "templateRows": 5,
+              "marginalRows": 6,
+              "marginalPercentSum": 356.4
+            },
+            {
+              "name": "Close Combat",
+              "templateRows": 4,
+              "marginalRows": 8,
+              "marginalPercentSum": 443.1
+            },
+            {
+              "name": "Dark Pulse",
+              "templateRows": 4,
+              "marginalRows": 6,
+              "marginalPercentSum": 362.1
+            },
+            {
+              "name": "Sucker Punch",
+              "templateRows": 4,
+              "marginalRows": 5,
+              "marginalPercentSum": 345.2
+            },
+            {
+              "name": "Draco Meteor",
+              "templateRows": 3,
+              "marginalRows": 5,
+              "marginalPercentSum": 254.7
+            },
+            {
+              "name": "Encore",
+              "templateRows": 3,
+              "marginalRows": 8,
+              "marginalPercentSum": 287.3
+            }
+          ],
+          "byMarginalMass": [
+            {
+              "name": "Earthquake",
+              "templateRows": 8,
+              "marginalRows": 9,
+              "marginalPercentSum": 610.8
+            },
+            {
+              "name": "U-turn",
+              "templateRows": 6,
+              "marginalRows": 11,
+              "marginalPercentSum": 496.8
+            },
+            {
+              "name": "Swords Dance",
+              "templateRows": 5,
+              "marginalRows": 11,
+              "marginalPercentSum": 465.4
+            },
+            {
+              "name": "Close Combat",
+              "templateRows": 4,
+              "marginalRows": 8,
+              "marginalPercentSum": 443.1
+            },
+            {
+              "name": "Roost",
+              "templateRows": 6,
+              "marginalRows": 8,
+              "marginalPercentSum": 406.8
+            },
+            {
+              "name": "Stealth Rock",
+              "templateRows": 6,
+              "marginalRows": 9,
+              "marginalPercentSum": 390.5
+            },
+            {
+              "name": "Flamethrower",
+              "templateRows": 6,
+              "marginalRows": 8,
+              "marginalPercentSum": 363.9
+            },
+            {
+              "name": "Dark Pulse",
+              "templateRows": 4,
+              "marginalRows": 6,
+              "marginalPercentSum": 362.1
+            },
+            {
+              "name": "Yawn",
+              "templateRows": 5,
+              "marginalRows": 6,
+              "marginalPercentSum": 356.4
+            },
+            {
+              "name": "Sucker Punch",
+              "templateRows": 4,
+              "marginalRows": 5,
+              "marginalPercentSum": 345.2
+            },
+            {
+              "name": "Moonblast",
+              "templateRows": 3,
+              "marginalRows": 4,
+              "marginalPercentSum": 321.8
+            },
+            {
+              "name": "Ice Beam",
+              "templateRows": 3,
+              "marginalRows": 8,
+              "marginalPercentSum": 297.5
+            }
+          ]
+        }
+      },
+      "priorityEvidence": {
+        "abilities": [
+          {
+            "name": "Levitate",
+            "templateRows": 3,
+            "marginalRows": 3,
+            "marginalPercentSum": 300
+          },
+          {
+            "name": "Multiscale",
+            "templateRows": 1,
+            "marginalRows": 1,
+            "marginalPercentSum": 98.8
+          },
+          {
+            "name": "Disguise",
+            "templateRows": 1,
+            "marginalRows": 1,
+            "marginalPercentSum": 100
+          },
+          {
+            "name": "Intimidate",
+            "templateRows": 3,
+            "marginalRows": 3,
+            "marginalPercentSum": 288.9
+          },
+          {
+            "name": "Unaware",
+            "templateRows": 2,
+            "marginalRows": 2,
+            "marginalPercentSum": 183.7
+          },
+          {
+            "name": "Thick Fat",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          },
+          {
+            "name": "Filter",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          },
+          {
+            "name": "Stamina",
+            "templateRows": 1,
+            "marginalRows": 1,
+            "marginalPercentSum": 71.3
+          },
+          {
+            "name": "Rough Skin",
+            "templateRows": 1,
+            "marginalRows": 1,
+            "marginalPercentSum": 99.1
+          }
+        ],
+        "items": [
+          {
+            "name": "Focus Sash",
+            "templateRows": 5,
+            "marginalRows": 38,
+            "marginalPercentSum": 498
+          },
+          {
+            "name": "Air Balloon",
+            "templateRows": 1,
+            "marginalRows": 22,
+            "marginalPercentSum": 135.8
+          },
+          {
+            "name": "Sitrus Berry",
+            "templateRows": 5,
+            "marginalRows": 48,
+            "marginalPercentSum": 459.9
+          },
+          {
+            "name": "Leftovers",
+            "templateRows": 6,
+            "marginalRows": 39,
+            "marginalPercentSum": 568.3
+          },
+          {
+            "name": "Rocky Helmet",
+            "templateRows": 3,
+            "marginalRows": 31,
+            "marginalPercentSum": 287.6
+          },
+          {
+            "name": "Assault Vest",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          },
+          {
+            "name": "Eviolite",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          }
+        ],
+        "moves": [
+          {
+            "name": "Shadow Ball",
+            "templateRows": 3,
+            "marginalRows": 6,
+            "marginalPercentSum": 271.2
+          },
+          {
+            "name": "Ice Beam",
+            "templateRows": 3,
+            "marginalRows": 8,
+            "marginalPercentSum": 297.5
+          },
+          {
+            "name": "Close Combat",
+            "templateRows": 4,
+            "marginalRows": 8,
+            "marginalPercentSum": 443.1
+          },
+          {
+            "name": "U-turn",
+            "templateRows": 6,
+            "marginalRows": 11,
+            "marginalPercentSum": 496.8
+          },
+          {
+            "name": "Heat Wave",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          },
+          {
+            "name": "Weather Ball",
+            "templateRows": 0,
+            "marginalRows": 2,
+            "marginalPercentSum": 57.6
+          },
+          {
+            "name": "Hyper Voice",
+            "templateRows": 1,
+            "marginalRows": 2,
+            "marginalPercentSum": 107.4
+          },
+          {
+            "name": "Earthquake",
+            "templateRows": 8,
+            "marginalRows": 9,
+            "marginalPercentSum": 610.8
+          },
+          {
+            "name": "Rock Slide",
+            "templateRows": 0,
+            "marginalRows": 3,
+            "marginalPercentSum": 25.2
+          },
+          {
+            "name": "Flamethrower",
+            "templateRows": 6,
+            "marginalRows": 8,
+            "marginalPercentSum": 363.9
+          },
+          {
+            "name": "Water Spout",
+            "templateRows": 0,
+            "marginalRows": 1,
+            "marginalPercentSum": 10.7
+          },
+          {
+            "name": "Protect",
+            "templateRows": 1,
+            "marginalRows": 7,
+            "marginalPercentSum": 198.7
+          }
+        ]
+      },
+      "limitations": [
+        "Representative sets combine independent category tops and may contain upstream defaults/clamps, not observed joint builds",
+        "Item marginals may mix mega stones and baseline forms; no cross-form combination inferred",
+        "All real master inclusion/provenance remains unconfirmed/provisional",
+        "No actual real-data calculation was attempted"
+      ],
+      "registeredCandidateEffects": [
+        "technician",
+        "hugePower",
+        "lifeOrb"
+      ]
+    },
+    {
+      "format": "Doubles",
+      "generatedAt": "2026-10-23T16:54:01.962Z",
+      "rows": 50,
+      "rankingProvenance": "unverified_rank",
+      "regulationId": null,
+      "data": {
+        "formId": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "masterForm": {
+          "numerator": 38,
+          "denominator": 50,
+          "percent": 76
+        },
+        "baseStats": {
+          "numerator": 38,
+          "denominator": 50,
+          "percent": 76
+        },
+        "types": {
+          "numerator": 38,
+          "denominator": 50,
+          "percent": 76
+        },
+        "points": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "abilityName": {
+          "numerator": 45,
+          "denominator": 50,
+          "percent": 90
+        },
+        "abilityFormLink": {
+          "numerator": 38,
+          "denominator": 50,
+          "percent": 76
+        },
+        "itemName": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "nature": {
+          "numerator": 50,
+          "denominator": 50,
+          "percent": 100
+        },
+        "allRepresentativeFields": {
+          "numerator": 38,
+          "denominator": 50,
+          "percent": 76
+        },
+        "abilityLegalityAmongKnownForms": {
+          "numerator": 38,
+          "denominator": 38,
+          "percent": 100
+        },
+        "physicalStatAlignmentVerified": false,
+        "rawPointCompleteness": null,
+        "rawNatureCompleteness": null
+      },
+      "rules": {
+        "defenderAbility": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "defenderItem": {
+          "numerator": 3,
+          "denominator": 50,
+          "percent": 6
+        },
+        "defenderAbilityAndItem": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "formBindings": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "integratedRealCatalogRows": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "marginalAbilities": {
+          "distinctNames": {
+            "numerator": 0,
+            "denominator": 83,
+            "percent": 0
+          },
+          "marginalMentions": {
+            "numerator": 0,
+            "denominator": 120,
+            "percent": 0
+          },
+          "catalogNames": {
+            "numerator": 78,
+            "denominator": 83,
+            "percent": 93.9759
+          },
+          "catalogMentions": {
+            "numerator": 114,
+            "denominator": 120,
+            "percent": 95
+          },
+          "missingCatalogNames": [
+            "Emergency Exit",
+            "Good as Gold",
+            "Grassy Surge",
+            "Psychic Surge",
+            "Vital Spirit"
+          ]
+        },
+        "marginalItems": {
+          "distinctNames": {
+            "numerator": 1,
+            "denominator": 94,
+            "percent": 1.0638
+          },
+          "marginalMentions": {
+            "numerator": 47,
+            "denominator": 500,
+            "percent": 9.4
+          },
+          "catalogNames": {
+            "numerator": 94,
+            "denominator": 94,
+            "percent": 100
+          },
+          "catalogMentions": {
+            "numerator": 500,
+            "denominator": 500,
+            "percent": 100
+          },
+          "missingCatalogNames": []
+        },
+        "scope": "Named candidate models only; the three existing effects are outgoing-only for defenders under the five supported direct/status move models. No other effect is inferred neutral."
+      },
+      "production": {
+        "eligibleRows": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "basis": "global RULES_NOT_APPROVED and absent approved real catalog; policy eligibility, not observed success",
+        "measuredCalculationSuccess": null
+      },
+      "gameEvidence": {
+        "rankRows": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "damageRows": {
+          "numerator": 0,
+          "denominator": 50,
+          "percent": 0
+        },
+        "measuredGameAccuracy": null
+      },
+      "attack": {
+        "templateSlots": {
+          "numerator": 46,
+          "denominator": 200,
+          "percent": 23
+        },
+        "templateDamageSlots": {
+          "numerator": 7,
+          "denominator": 200,
+          "percent": 3.5
+        },
+        "templateMissingMoves": 0,
+        "templateExcludedSlots": 3,
+        "marginalModelMentions": {
+          "numerator": 66,
+          "denominator": 500,
+          "percent": 13.2
+        },
+        "marginalDamageMentions": {
+          "numerator": 19,
+          "denominator": 500,
+          "percent": 3.8
+        },
+        "marginalModelMass": {
+          "numerator": 3851,
+          "denominator": 18951,
+          "percent": 20.3208
+        },
+        "marginalDamageMass": {
+          "numerator": 728.9,
+          "denominator": 18951,
+          "percent": 3.8462
+        },
+        "damagingOnlyMass": {
+          "numerator": 728.9,
+          "denominator": 11611.6,
+          "percent": 6.2773
+        },
+        "unknownCategoryMentions": 0,
+        "marginalMissingMoveMentions": 0,
+        "marginalExcludedMoveMentions": 4,
+        "marginalRowEntryRange": {
+          "min": 10,
+          "max": 10
+        },
+        "distinctReportedMoveNames": 181,
+        "jointMoveAbilityItemUsage": null,
+        "marginalMeaning": "Sum of reported per-form marginal percentage points, with equal weight per TOP50 form and truncated reported lists; not population usage or a joint distribution. Protect is model-only, never damage coverage."
+      },
+      "blockers": {
+        "unresolvedSourceForm": 0,
+        "missingMasterForm": 12,
+        "missingBaseStats": 12,
+        "invalidTypes": 12,
+        "missingOrInvalidPoints": 0,
+        "missingAbilityCatalog": 5,
+        "illegalAbilityOnKnownForm": 0,
+        "missingItemCatalog": 0,
+        "missingOrInvalidNature": 0,
+        "incompleteTemplate": 0,
+        "unsupportedDefenderAbility": 50,
+        "unsupportedDefenderItem": 47
+      },
+      "missing": {
+        "forms": [
+          "Annihilape",
+          "Basculegion-F",
+          "Gholdengo",
+          "Golisopod",
+          "Grimmsnarl",
+          "Indeedee",
+          "Indeedee-F",
+          "Metagross",
+          "Rillaboom",
+          "Salamence",
+          "Staraptor",
+          "Swampert"
+        ],
+        "abilities": [
+          "Emergency Exit",
+          "Good as Gold",
+          "Grassy Surge",
+          "Psychic Surge"
+        ],
+        "items": [],
+        "natures": [],
+        "templateExcludedMoves": [
+          "Make It Rain",
+          "Rage Fist",
+          "Spirit Break"
+        ],
+        "marginalExcludedMoves": [
+          "Drum Beating",
+          "Make It Rain",
+          "Rage Fist",
+          "Spirit Break"
+        ]
+      },
+      "frequencies": {
+        "abilities": {
+          "byTemplate": [
+            {
+              "name": "Intimidate",
+              "templateRows": 3,
+              "marginalRows": 4,
+              "marginalPercentSum": 298.7
+            },
+            {
+              "name": "Prankster",
+              "templateRows": 3,
+              "marginalRows": 3,
+              "marginalPercentSum": 292.9
+            },
+            {
+              "name": "Blaze",
+              "templateRows": 2,
+              "marginalRows": 3,
+              "marginalPercentSum": 167.3
+            },
+            {
+              "name": "Cursed Body",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 176.9
+            },
+            {
+              "name": "Defiant",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 193.8
+            },
+            {
+              "name": "Drizzle",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 199.7
+            },
+            {
+              "name": "Psychic Surge",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 199.6
+            },
+            {
+              "name": "Adaptability",
+              "templateRows": 1,
+              "marginalRows": 2,
+              "marginalPercentSum": 107.5
+            },
+            {
+              "name": "Armor Tail",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 98.3
+            },
+            {
+              "name": "Chlorophyll",
+              "templateRows": 1,
+              "marginalRows": 2,
+              "marginalPercentSum": 104.3
+            },
+            {
+              "name": "Clear Body",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 99.5
+            },
+            {
+              "name": "Competitive",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 99.1
+            }
+          ],
+          "byMarginalMass": [
+            {
+              "name": "Intimidate",
+              "templateRows": 3,
+              "marginalRows": 4,
+              "marginalPercentSum": 298.7
+            },
+            {
+              "name": "Prankster",
+              "templateRows": 3,
+              "marginalRows": 3,
+              "marginalPercentSum": 292.9
+            },
+            {
+              "name": "Drizzle",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 199.7
+            },
+            {
+              "name": "Psychic Surge",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 199.6
+            },
+            {
+              "name": "Defiant",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 193.8
+            },
+            {
+              "name": "Cursed Body",
+              "templateRows": 2,
+              "marginalRows": 2,
+              "marginalPercentSum": 176.9
+            },
+            {
+              "name": "Blaze",
+              "templateRows": 2,
+              "marginalRows": 3,
+              "marginalPercentSum": 167.3
+            },
+            {
+              "name": "Inner Focus",
+              "templateRows": 1,
+              "marginalRows": 4,
+              "marginalPercentSum": 138.5
+            },
+            {
+              "name": "Adaptability",
+              "templateRows": 1,
+              "marginalRows": 2,
+              "marginalPercentSum": 107.5
+            },
+            {
+              "name": "Chlorophyll",
+              "templateRows": 1,
+              "marginalRows": 2,
+              "marginalPercentSum": 104.3
+            },
+            {
+              "name": "Torrent",
+              "templateRows": 1,
+              "marginalRows": 3,
+              "marginalPercentSum": 101.4
+            },
+            {
+              "name": "Flame Body",
+              "templateRows": 1,
+              "marginalRows": 2,
+              "marginalPercentSum": 101.2
+            }
+          ]
+        },
+        "items": {
+          "byTemplate": [
+            {
+              "name": "Focus Sash",
+              "templateRows": 8,
+              "marginalRows": 42,
+              "marginalPercentSum": 693.7
+            },
+            {
+              "name": "Sitrus Berry",
+              "templateRows": 5,
+              "marginalRows": 45,
+              "marginalPercentSum": 382
+            },
+            {
+              "name": "Leftovers",
+              "templateRows": 4,
+              "marginalRows": 35,
+              "marginalPercentSum": 349.4
+            },
+            {
+              "name": "Life Orb",
+              "templateRows": 3,
+              "marginalRows": 47,
+              "marginalPercentSum": 401.9
+            },
+            {
+              "name": "Light Clay",
+              "templateRows": 3,
+              "marginalRows": 4,
+              "marginalPercentSum": 161.4
+            },
+            {
+              "name": "Choice Scarf",
+              "templateRows": 2,
+              "marginalRows": 31,
+              "marginalPercentSum": 231.1
+            },
+            {
+              "name": "Rocky Helmet",
+              "templateRows": 2,
+              "marginalRows": 22,
+              "marginalPercentSum": 113.9
+            },
+            {
+              "name": "Blastoisinite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 90
+            },
+            {
+              "name": "Charcoal",
+              "templateRows": 1,
+              "marginalRows": 7,
+              "marginalPercentSum": 88.1
+            },
+            {
+              "name": "Charizardite Y",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 94.2
+            },
+            {
+              "name": "Chople Berry",
+              "templateRows": 1,
+              "marginalRows": 6,
+              "marginalPercentSum": 62.1
+            },
+            {
+              "name": "Delphoxite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 91.2
+            }
+          ],
+          "byMarginalMass": [
+            {
+              "name": "Focus Sash",
+              "templateRows": 8,
+              "marginalRows": 42,
+              "marginalPercentSum": 693.7
+            },
+            {
+              "name": "Life Orb",
+              "templateRows": 3,
+              "marginalRows": 47,
+              "marginalPercentSum": 401.9
+            },
+            {
+              "name": "Sitrus Berry",
+              "templateRows": 5,
+              "marginalRows": 45,
+              "marginalPercentSum": 382
+            },
+            {
+              "name": "Leftovers",
+              "templateRows": 4,
+              "marginalRows": 35,
+              "marginalPercentSum": 349.4
+            },
+            {
+              "name": "Choice Scarf",
+              "templateRows": 2,
+              "marginalRows": 31,
+              "marginalPercentSum": 231.1
+            },
+            {
+              "name": "Light Clay",
+              "templateRows": 3,
+              "marginalRows": 4,
+              "marginalPercentSum": 161.4
+            },
+            {
+              "name": "Rocky Helmet",
+              "templateRows": 2,
+              "marginalRows": 22,
+              "marginalPercentSum": 113.9
+            },
+            {
+              "name": "Psychic Seed",
+              "templateRows": 1,
+              "marginalRows": 11,
+              "marginalPercentSum": 99.4
+            },
+            {
+              "name": "Froslassite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 98.3
+            },
+            {
+              "name": "Golisopite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 98.2
+            },
+            {
+              "name": "Floettite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 97.8
+            },
+            {
+              "name": "Salamencite",
+              "templateRows": 1,
+              "marginalRows": 1,
+              "marginalPercentSum": 96.3
+            }
+          ]
+        },
+        "moves": {
+          "byTemplate": [
+            {
+              "name": "Protect",
+              "templateRows": 39,
+              "marginalRows": 47,
+              "marginalPercentSum": 3122.1
+            },
+            {
+              "name": "Tailwind",
+              "templateRows": 7,
+              "marginalRows": 9,
+              "marginalPercentSum": 575.9
+            },
+            {
+              "name": "Fake Out",
+              "templateRows": 4,
+              "marginalRows": 7,
+              "marginalPercentSum": 375.7
+            },
+            {
+              "name": "Hyper Voice",
+              "templateRows": 4,
+              "marginalRows": 6,
+              "marginalPercentSum": 424.8
+            },
+            {
+              "name": "Rock Slide",
+              "templateRows": 4,
+              "marginalRows": 8,
+              "marginalPercentSum": 406.8
+            },
+            {
+              "name": "Shadow Ball",
+              "templateRows": 4,
+              "marginalRows": 6,
+              "marginalPercentSum": 408.8
+            },
+            {
+              "name": "Trick Room",
+              "templateRows": 4,
+              "marginalRows": 6,
+              "marginalPercentSum": 329.3
+            },
+            {
+              "name": "Weather Ball",
+              "templateRows": 4,
+              "marginalRows": 5,
+              "marginalPercentSum": 299.2
+            },
+            {
+              "name": "Brave Bird",
+              "templateRows": 3,
+              "marginalRows": 3,
+              "marginalPercentSum": 218.1
+            },
+            {
+              "name": "Close Combat",
+              "templateRows": 3,
+              "marginalRows": 6,
+              "marginalPercentSum": 264.8
+            },
+            {
+              "name": "Expanding Force",
+              "templateRows": 3,
+              "marginalRows": 5,
+              "marginalPercentSum": 325.4
+            },
+            {
+              "name": "Flare Blitz",
+              "templateRows": 3,
+              "marginalRows": 4,
+              "marginalPercentSum": 260.3
+            }
+          ],
+          "byMarginalMass": [
+            {
+              "name": "Protect",
+              "templateRows": 39,
+              "marginalRows": 47,
+              "marginalPercentSum": 3122.1
+            },
+            {
+              "name": "Tailwind",
+              "templateRows": 7,
+              "marginalRows": 9,
+              "marginalPercentSum": 575.9
+            },
+            {
+              "name": "Hyper Voice",
+              "templateRows": 4,
+              "marginalRows": 6,
+              "marginalPercentSum": 424.8
+            },
+            {
+              "name": "Shadow Ball",
+              "templateRows": 4,
+              "marginalRows": 6,
+              "marginalPercentSum": 408.8
+            },
+            {
+              "name": "Rock Slide",
+              "templateRows": 4,
+              "marginalRows": 8,
+              "marginalPercentSum": 406.8
+            },
+            {
+              "name": "Fake Out",
+              "templateRows": 4,
+              "marginalRows": 7,
+              "marginalPercentSum": 375.7
+            },
+            {
+              "name": "Heat Wave",
+              "templateRows": 3,
+              "marginalRows": 7,
+              "marginalPercentSum": 350
+            },
+            {
+              "name": "Trick Room",
+              "templateRows": 4,
+              "marginalRows": 6,
+              "marginalPercentSum": 329.3
+            },
+            {
+              "name": "Expanding Force",
+              "templateRows": 3,
+              "marginalRows": 5,
+              "marginalPercentSum": 325.4
+            },
+            {
+              "name": "Iron Head",
+              "templateRows": 3,
+              "marginalRows": 7,
+              "marginalPercentSum": 322.3
+            },
+            {
+              "name": "Moonblast",
+              "templateRows": 3,
+              "marginalRows": 6,
+              "marginalPercentSum": 320.4
+            },
+            {
+              "name": "Weather Ball",
+              "templateRows": 4,
+              "marginalRows": 5,
+              "marginalPercentSum": 299.2
+            }
+          ]
+        }
+      },
+      "priorityEvidence": {
+        "abilities": [
+          {
+            "name": "Levitate",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          },
+          {
+            "name": "Multiscale",
+            "templateRows": 1,
+            "marginalRows": 1,
+            "marginalPercentSum": 51.6
+          },
+          {
+            "name": "Disguise",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          },
+          {
+            "name": "Intimidate",
+            "templateRows": 3,
+            "marginalRows": 4,
+            "marginalPercentSum": 298.7
+          },
+          {
+            "name": "Unaware",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          },
+          {
+            "name": "Thick Fat",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          },
+          {
+            "name": "Filter",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          },
+          {
+            "name": "Stamina",
+            "templateRows": 1,
+            "marginalRows": 1,
+            "marginalPercentSum": 96.5
+          },
+          {
+            "name": "Rough Skin",
+            "templateRows": 1,
+            "marginalRows": 1,
+            "marginalPercentSum": 97.6
+          }
+        ],
+        "items": [
+          {
+            "name": "Focus Sash",
+            "templateRows": 8,
+            "marginalRows": 42,
+            "marginalPercentSum": 693.7
+          },
+          {
+            "name": "Air Balloon",
+            "templateRows": 0,
+            "marginalRows": 8,
+            "marginalPercentSum": 4.1
+          },
+          {
+            "name": "Sitrus Berry",
+            "templateRows": 5,
+            "marginalRows": 45,
+            "marginalPercentSum": 382
+          },
+          {
+            "name": "Leftovers",
+            "templateRows": 4,
+            "marginalRows": 35,
+            "marginalPercentSum": 349.4
+          },
+          {
+            "name": "Rocky Helmet",
+            "templateRows": 2,
+            "marginalRows": 22,
+            "marginalPercentSum": 113.9
+          },
+          {
+            "name": "Assault Vest",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          },
+          {
+            "name": "Eviolite",
+            "templateRows": 0,
+            "marginalRows": 0,
+            "marginalPercentSum": 0
+          }
+        ],
+        "moves": [
+          {
+            "name": "Shadow Ball",
+            "templateRows": 4,
+            "marginalRows": 6,
+            "marginalPercentSum": 408.8
+          },
+          {
+            "name": "Ice Beam",
+            "templateRows": 3,
+            "marginalRows": 7,
+            "marginalPercentSum": 251.8
+          },
+          {
+            "name": "Close Combat",
+            "templateRows": 3,
+            "marginalRows": 6,
+            "marginalPercentSum": 264.8
+          },
+          {
+            "name": "U-turn",
+            "templateRows": 0,
+            "marginalRows": 4,
+            "marginalPercentSum": 67
+          },
+          {
+            "name": "Heat Wave",
+            "templateRows": 3,
+            "marginalRows": 7,
+            "marginalPercentSum": 350
+          },
+          {
+            "name": "Weather Ball",
+            "templateRows": 4,
+            "marginalRows": 5,
+            "marginalPercentSum": 299.2
+          },
+          {
+            "name": "Hyper Voice",
+            "templateRows": 4,
+            "marginalRows": 6,
+            "marginalPercentSum": 424.8
+          },
+          {
+            "name": "Earthquake",
+            "templateRows": 2,
+            "marginalRows": 5,
+            "marginalPercentSum": 152.3
+          },
+          {
+            "name": "Rock Slide",
+            "templateRows": 4,
+            "marginalRows": 8,
+            "marginalPercentSum": 406.8
+          },
+          {
+            "name": "Flamethrower",
+            "templateRows": 0,
+            "marginalRows": 5,
+            "marginalPercentSum": 83.6
+          },
+          {
+            "name": "Water Spout",
+            "templateRows": 1,
+            "marginalRows": 1,
+            "marginalPercentSum": 86.2
+          },
+          {
+            "name": "Protect",
+            "templateRows": 39,
+            "marginalRows": 47,
+            "marginalPercentSum": 3122.1
+          }
+        ]
+      },
+      "limitations": [
+        "Representative sets combine independent category tops and may contain upstream defaults/clamps, not observed joint builds",
+        "Item marginals may mix mega stones and baseline forms; no cross-form combination inferred",
+        "All real master inclusion/provenance remains unconfirmed/provisional",
+        "No actual real-data calculation was attempted"
+      ],
+      "registeredCandidateEffects": [
+        "technician",
+        "hugePower",
+        "lifeOrb"
+      ]
+    }
+  ],
+  "realDataCalculationsExecuted": 0,
+  "realDataCatalogPromotions": 0,
+  "ingameVerification": {
+    "P0_05": "unverified",
+    "P0_06": "unverified"
+  },
+  "unmeasured": [
+    "Population-weighted move coverage",
+    "Joint build usage",
+    "Raw points/nature completeness for all TOP50",
+    "Game accuracy",
+    "Real-data end-to-end success"
+  ]
+}

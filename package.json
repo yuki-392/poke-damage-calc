@@ -19,7 +19,11 @@
     "contracts:check": "node --import tsx scripts/generate-openapi.ts --check",
     "audit:external": "node --import tsx scripts/audit/external-data.ts",
     "audit:local": "node --import tsx scripts/audit/local-supabase.ts",
-    "audit:fetch": "node scripts/audit/fetch-external.mjs"
+    "audit:fetch": "node scripts/audit/fetch-external.mjs",
+    "audit:l2": "node --import tsx scripts/audit/l2-comparison.ts",
+    "audit:l2:phase2b": "node --import tsx scripts/audit/l2-comparison.ts --phase2b",
+    "audit:l2:phase2b2": "node --import tsx scripts/audit/l2-comparison.ts --phase2b2",
+    "audit:coverage": "node --import tsx scripts/audit/run-top50-coverage.ts"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
@@ -38,6 +42,7 @@
   "devDependencies": {
     "@apidevtools/swagger-parser": "13.1.0",
     "@playwright/test": "1.64.1",
+    "@smogon/calc": "0.12.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
